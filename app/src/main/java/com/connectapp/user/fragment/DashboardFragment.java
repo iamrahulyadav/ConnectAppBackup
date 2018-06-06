@@ -20,6 +20,7 @@ import com.connectapp.user.activity.ComingSoonActivity;
 import com.connectapp.user.activity.GoogleSignInActivity;
 import com.connectapp.user.activity.KeyWordActivity;
 import com.connectapp.user.activity.RathFormActivity;
+import com.connectapp.user.activity.ResourcesActivity;
 import com.connectapp.user.activity.SchoolFormActivity;
 import com.connectapp.user.adapter.ThreadListAdapter;
 import com.connectapp.user.constant.Consts;
@@ -127,18 +128,24 @@ public class DashboardFragment extends Fragment implements DBConstants {
                         item.setKeywords(keywordList);
                         threadList.add(item);
                     }
+
+                    Thread threadResources = new Thread();
+                    threadResources.setThreadID("resources");
+                    threadResources.setThreadName("Resources");
                     Thread threadMembersDirectory = new Thread();
-                    threadMembersDirectory.setThreadID("xyz");
+                    threadMembersDirectory.setThreadID("membersDirectory");
                     threadMembersDirectory.setThreadName("Members Directory");
-                    Thread threadChat = new Thread();
-                    threadChat.setThreadID("chat");
-                    threadChat.setThreadName("ConnectApp Chat");
                     Thread threadEkalPrayash = new Thread();
                     threadEkalPrayash.setThreadID("ekalPrayash");
                     threadEkalPrayash.setThreadName("Ekal Prayash");
+                    Thread threadChat = new Thread();
+                    threadChat.setThreadID("chat");
+                    threadChat.setThreadName("ConnectApp Chat");
+
+                    threadList.add(threadResources);
                     threadList.add(threadMembersDirectory);
-                    threadList.add(threadChat);
                     threadList.add(threadEkalPrayash);
+                    threadList.add(threadChat);
                     saveThreads(threadList);
                     updateListUI(threadList);
 
@@ -196,15 +203,9 @@ public class DashboardFragment extends Fragment implements DBConstants {
                             startActivity(intent);
 
                         } else {
-                            Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
+                             Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
                         }
                     }
-                } else if (threadList.get(position).getThreadName().equalsIgnoreCase("ConnectApp Chat")) {
-                    Intent intent = new Intent(mContext, GoogleSignInActivity.class);
-                    //intent.putExtra("thread", threadList.get(position));
-                    startActivity(intent);
-
-
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
 
                    /* Snackbar sb = Snackbar.make(view, "Ekal Prayash", Snackbar.LENGTH_LONG).setAction("Action", null);
@@ -214,10 +215,22 @@ public class DashboardFragment extends Fragment implements DBConstants {
                     intent.putExtra("thread", threadList.get(position));
                     startActivity(intent);
 
-                } else {
+                } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Resources")) {
+
+                    DashboardFragment.this.startActivity(new Intent(DashboardFragment.this.mContext, ResourcesActivity.class));
+
+                } else if (threadList.get(position).getThreadName().equalsIgnoreCase("ConnectApp Chat")) {
+
+                    Intent intent = new Intent(mContext, GoogleSignInActivity.class);
+                    //intent.putExtra("thread", threadList.get(position));
+                    startActivity(intent);
+
+
+                }
+                /*else {
 
                     openKeyWordsActivity(position);
-                }
+                }*/
 
             }
 
