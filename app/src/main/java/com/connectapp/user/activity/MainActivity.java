@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             displayView(1);
         }
 
+
     }
 
     @Override
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -605,15 +607,6 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
 
     }
 
-    public synchronized void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("------>> onActivityResult CALLED  >>---------------");
-        if (requestCode == 11 && resultCode == Activity.RESULT_OK) {
-            this.tv_stateCode.setText(data.getStringExtra(StateCodeActivity.RESULT_STATECODE));
-            this.et_anchal.requestFocus();
-            Util.showSoftKeyboard(this.mContext, this.et_anchal);
-        }
-    }
-
     private void gotoSchoolViewMenu() {
         Intent intent = new Intent(mContext, SchoolViewMenuActivity.class);
         startActivity(intent);
@@ -626,4 +619,14 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("------>> onActivityResult CALLED  >>---------------");
+        if (requestCode == 11 && resultCode == Activity.RESULT_OK) {
+            this.tv_stateCode.setText(data.getStringExtra(StateCodeActivity.RESULT_STATECODE));
+            this.et_anchal.requestFocus();
+            Util.showSoftKeyboard(this.mContext, this.et_anchal);
+        }
+    }
 }

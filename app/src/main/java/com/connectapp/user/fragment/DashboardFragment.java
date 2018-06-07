@@ -1,9 +1,13 @@
 package com.connectapp.user.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +20,11 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.connectapp.user.R;
+import com.connectapp.user.activity.ChatActivity;
 import com.connectapp.user.activity.ComingSoonActivity;
 import com.connectapp.user.activity.GoogleSignInActivity;
 import com.connectapp.user.activity.KeyWordActivity;
+import com.connectapp.user.activity.MainActivity;
 import com.connectapp.user.activity.RathFormActivity;
 import com.connectapp.user.activity.ResourcesActivity;
 import com.connectapp.user.activity.SchoolFormActivity;
@@ -27,12 +33,30 @@ import com.connectapp.user.constant.Consts;
 import com.connectapp.user.data.Keyword;
 import com.connectapp.user.data.Thread;
 import com.connectapp.user.data.Threads;
+import com.connectapp.user.data.User;
 import com.connectapp.user.data.UserClass;
+import com.connectapp.user.dropDownActivity.StateCodeActivity;
 import com.connectapp.user.members.MembersDirectory;
 import com.connectapp.user.syncadapter.DBConstants;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.volley.PostWithJsonWebTask;
 import com.connectapp.user.volley.ServerResponseStringCallback;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,7 +64,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DashboardFragment extends Fragment implements DBConstants {
+public class DashboardFragment extends Fragment implements DBConstants, GoogleApiClient.OnConnectionFailedListener {
 
     private ListView lv_menu;
     private Context mContext;
@@ -50,6 +74,15 @@ public class DashboardFragment extends Fragment implements DBConstants {
 
     private boolean isFetchThreads = false;
 
+    //Firebase and GoogleApiClient
+    public static GoogleApiClient mGoogleApiClient;
+    public static FirebaseAuth mFirebaseAuth;
+    public static final int RC_SIGN_IN = 9001;
+
+    private ProgressDialog mProgressDialog;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private GoogleSignInAccount acct;
+    private DatabaseReference mDatabase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,6 +127,48 @@ public class DashboardFragment extends Fragment implements DBConstants {
             }
         }
 
+        initializeFirebaseComponents();
+
+    }
+
+    private void initializeFirebaseComponents() {
+
+        //GOOGLE LOGIN
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage((FragmentActivity) getActivity(), this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+
+
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if (user != null) {
+                    String name = user.getDisplayName();
+                    Toast.makeText(mContext, "" + user.getDisplayName(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mContext, "something went wrong", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        };
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        mProgressDialog = new ProgressDialog(mContext);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("Loading...");
     }
 
     private void getThreads(String resultJsonString) {
@@ -112,6 +187,9 @@ public class DashboardFragment extends Fragment implements DBConstants {
                         Thread item = new Thread();
                         item.setThreadID(resultArray.optJSONObject(i).optString("tid"));
                         item.setThreadName(resultArray.optJSONObject(i).optString("tname"));
+                        if (item.getThreadName().equalsIgnoreCase("Rath")) {
+                            item.setThreadImage(R.drawable.ic_rath);
+                        }
                         Log.v("Keywords", "Keywords: " + resultArray.optJSONObject(i).optString("keywords"));
                         JSONArray keywordsArray = resultArray.optJSONObject(i).optJSONArray("keywords");
                         ArrayList<Keyword> keywordList = new ArrayList<Keyword>();
@@ -132,16 +210,19 @@ public class DashboardFragment extends Fragment implements DBConstants {
                     Thread threadResources = new Thread();
                     threadResources.setThreadID("resources");
                     threadResources.setThreadName("Resources");
+                    threadResources.setThreadImage(R.drawable.ic_resources_bg);
                     Thread threadMembersDirectory = new Thread();
                     threadMembersDirectory.setThreadID("membersDirectory");
                     threadMembersDirectory.setThreadName("Members Directory");
+                    threadMembersDirectory.setThreadImage(R.drawable.ic_members);
                     Thread threadEkalPrayash = new Thread();
                     threadEkalPrayash.setThreadID("ekalPrayash");
                     threadEkalPrayash.setThreadName("Ekal Prayash");
+                    threadEkalPrayash.setThreadImage(R.drawable.ic_ekal_prayash_bg);
                     Thread threadChat = new Thread();
                     threadChat.setThreadID("chat");
                     threadChat.setThreadName("ConnectApp Chat");
-
+                    threadChat.setThreadImage(R.drawable.ic_chat_bg);
                     threadList.add(threadResources);
                     threadList.add(threadMembersDirectory);
                     threadList.add(threadEkalPrayash);
@@ -203,7 +284,7 @@ public class DashboardFragment extends Fragment implements DBConstants {
                             startActivity(intent);
 
                         } else {
-                             Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
@@ -221,10 +302,9 @@ public class DashboardFragment extends Fragment implements DBConstants {
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("ConnectApp Chat")) {
 
-                    Intent intent = new Intent(mContext, GoogleSignInActivity.class);
-                    //intent.putExtra("thread", threadList.get(position));
-                    startActivity(intent);
-
+                    mFirebaseAuth.signOut();
+                    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
 
                 }
                 /*else {
@@ -247,4 +327,104 @@ public class DashboardFragment extends Fragment implements DBConstants {
 
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("SignIn", "onConnectionFailed:" + connectionResult);
+        Util.initToast(getActivity(), "Google Play Services error.");
+        hideProgressDialog();
+    }
+
+    public void showProgressDialog() {
+        if (!mProgressDialog.isShowing())
+            mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog.isShowing())
+            mProgressDialog.dismiss();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("------>> onActivityResult CALLED  >>---------------");
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                Toast.makeText(mContext, "Google Account Verified.", Toast.LENGTH_SHORT).show();
+                GoogleSignInAccount account = result.getSignInAccount();
+
+                showProgressDialog();
+                firebaseAuthWithGoogle(account);
+            } else {
+                Log.e("Signin", "Google Sign In failed.");
+                Toast.makeText(mContext, "Google Sign In failed.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //Pass the activity result back to the Facebook SDK
+            // mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
+        this.acct = acct;
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        //Log.e(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                        hideProgressDialog();
+                        if (!task.isSuccessful()) {
+
+                            Log.e(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(mContext, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            // Util.initToast(mContext, "Authentication failed");
+                        } else {
+
+                            mDatabase = FirebaseDatabase.getInstance().getReference();
+                            addUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+                            String instanceId = FirebaseInstanceId.getInstance().getToken();
+
+                            Intent intent = new Intent(mContext, ChatActivity.class);
+                            //intent.putExtra("thread", threadList.get(position));
+                            startActivity(intent);
+
+                            //TODO Call update user API to update firebase id, email etc.
+                           /* HashMap<String, String> requestMap = new HashMap<>();
+                            requestMap.put("emailID", "" + acct.getEmail());
+                            requestMap.put("mobile", "" + Util.fetchUserClass(mContext).getPhone());
+                            requestMap.put("name", "" + acct.getDisplayName());
+                            requestMap.put("fid", mFirebaseAuth.getCurrentUser().getUid());
+                            requestMap.put("img", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
+                            requestMap.put("deviceToken",""+instanceId);
+                            Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
+                            volleyTaskManager.doRegistration(requestMap, true);*/
+                            //Toast.makeText(mContext,"Logging in! Please wait...",Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+    }
+
+
+    private void addUserToDatabase(FirebaseUser firebaseUser) {
+        User user = new User(
+                firebaseUser.getDisplayName(),
+                firebaseUser.getEmail(),
+                firebaseUser.getUid(),
+                firebaseUser.getPhotoUrl() == null ? "" : firebaseUser.getPhotoUrl().toString()
+        );
+
+        mDatabase.child("users")
+                .child(user.getUid()).setValue(user);
+
+        String instanceId = FirebaseInstanceId.getInstance().getToken();
+        if (instanceId != null) {
+            mDatabase.child("users")
+                    .child(firebaseUser.getUid())
+                    .child("instanceId")
+                    .setValue(instanceId);
+        }
+    }
 }
