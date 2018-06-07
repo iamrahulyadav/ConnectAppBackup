@@ -88,4 +88,6 @@
     <color name="chat_received_white">#ffffff</color>
     <color name="chat_black">#333333</color>
     <color name="chat_grey">#C8C8C8</color>
+
+    <color name="grey_medium">#BDBFC1</color>
 </resources>

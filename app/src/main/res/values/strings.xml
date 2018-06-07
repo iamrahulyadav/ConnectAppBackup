@@ -240,4 +240,7 @@
     <string name="landscape_fullscreen">Always fullscreen in landscape</string>
     <string name="enter_fullscreen">Enter Fullscreen</string>
 
+    // Firebase DB
+    <string name="settings_file_name">com.connectapp.users.temp</string>
+
 </resources>
