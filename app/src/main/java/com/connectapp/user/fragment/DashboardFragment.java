@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.connectapp.user.R;
 import com.connectapp.user.activity.ChatActivity;
+import com.connectapp.user.activity.ChatContactsActivity;
 import com.connectapp.user.activity.ComingSoonActivity;
 import com.connectapp.user.activity.GoogleSignInActivity;
 import com.connectapp.user.activity.KeyWordActivity;
@@ -302,7 +303,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("ConnectApp Chat")) {
 
-                    mFirebaseAuth.signOut();
+                    signOutFromFirebase();
                     Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                     startActivityForResult(signInIntent, RC_SIGN_IN);
 
@@ -315,6 +316,12 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
             }
 
         });
+    }
+
+    private void signOutFromFirebase() {
+        mFirebaseAuth.signOut();
+        // Google sign out
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
     private void openKeyWordsActivity(int position) {
@@ -386,7 +393,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                             addUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
                             String instanceId = FirebaseInstanceId.getInstance().getToken();
 
-                            Intent intent = new Intent(mContext, ChatActivity.class);
+                            Intent intent = new Intent(mContext, ChatContactsActivity.class);
                             //intent.putExtra("thread", threadList.get(position));
                             startActivity(intent);
 
