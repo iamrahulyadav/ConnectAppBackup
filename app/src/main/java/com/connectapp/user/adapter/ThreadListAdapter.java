@@ -59,7 +59,8 @@ public class ThreadListAdapter extends BaseAdapter {
 
         ViewHolder holder = (ViewHolder) hView.getTag();
         holder.threadName.setText(threadList.get(position).getThreadName());
-        if (threadList.get(position).getThreadName().trim().equalsIgnoreCase("Rath")) {
+        holder.iv_item_image.setImageResource(threadList.get(position).getThreadImage());
+        /*if (threadList.get(position).getThreadName().trim().equalsIgnoreCase("Rath")) {
             holder.iv_item_image.setImageResource(R.drawable.ic_rath);
         } else if (threadList.get(position).getThreadName().trim().equalsIgnoreCase("Members Directory")) {
             holder.iv_item_image.setImageResource(R.drawable.ic_members);
@@ -69,7 +70,7 @@ public class ThreadListAdapter extends BaseAdapter {
             holder.iv_item_image.setImageResource(R.drawable.ic_ekal_prayash_bg);
         } else if (threadList.get(position).getThreadName().trim().equalsIgnoreCase("ConnectApp Chat")) {
             holder.iv_item_image.setImageResource(R.drawable.ic_chat_bg);
-        }
+        }*/
 
         return hView;
     }
