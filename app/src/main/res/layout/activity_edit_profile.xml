@@ -70,7 +70,7 @@
             android:layout_marginRight="13dp"
             android:orientation="horizontal">
 
-            <EditText
+            <TextView
                 android:id="@+id/tv_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,6 +78,19 @@
                 android:textColor="@color/grey_dark"
                 android:textSize="20sp"
                 android:typeface="sans" />
+
+            <EditText
+                android:id="@+id/et_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number|phone"
+                android:singleLine="true"
+                android:text="+91 "
+                android:textColor="@color/grey_dark"
+                android:textSize="20sp"
+                android:typeface="sans"
+                android:visibility="gone" />
 
             <ImageView
                 android:layout_width="35dp"
@@ -113,7 +126,7 @@
             android:layout_marginRight="13dp"
             android:orientation="horizontal">
 
-            <EditText
+            <TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -121,6 +134,19 @@
                 android:textColor="@color/grey_dark"
                 android:textSize="20sp"
                 android:typeface="sans" />
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textWebEmailAddress"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/grey_dark"
+                android:textSize="20sp"
+                android:typeface="sans"
+                android:visibility="gone" />
 
             <ImageView
                 android:layout_width="35dp"
@@ -150,7 +176,8 @@
         android:layout_marginTop="13dp"
         android:paddingBottom="7dp"
         android:paddingTop="7dp"
-        android:text="SAve" />
+        android:text="SAve"
+        android:visibility="gone" />
 
 
 </LinearLayout>

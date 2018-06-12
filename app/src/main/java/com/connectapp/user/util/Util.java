@@ -87,7 +87,16 @@ public class Util {
 		inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		;
 	}
-
+	/**
+	 * This method checks wether the provided email is valid or not.
+	 */
+	public static boolean isValidEmail(CharSequence target) {
+		if (target == null) {
+			return false;
+		} else {
+			return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+		}
+	}
 	/** Shows custom alert dialog with OK option. **/
 	public static void showMessageWithOk(final Activity mContext, final String message) {
 		((Activity) mContext).runOnUiThread(new Runnable() {
@@ -604,17 +613,17 @@ public class Util {
 
 		switch (type) {
 		case 0:
-			Log.i(logtitle, logcontent + "");
+			Log.e(logtitle, logcontent + "");
 			break;
 		case 1:
 			Log.e(logtitle, logcontent + "");
 			break;
 		case 2:
-			Log.v(logtitle, logcontent + "");
+			Log.e(logtitle, logcontent + "");
 			break;
 
 		default:
-			Log.i(logtitle, logcontent + "");
+			Log.e(logtitle, logcontent + "");
 			break;
 		}
 	}

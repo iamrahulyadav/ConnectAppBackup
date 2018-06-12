@@ -1,19 +1,31 @@
 package com.connectapp.user.activity;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.connectapp.user.R;
 import com.connectapp.user.adapter.ChatContactsAdapter;
 import com.connectapp.user.data.ParseFirebaseData;
 import com.connectapp.user.model.Friend;
+import com.connectapp.user.util.Util;
 import com.connectapp.user.volley.ServerResponseCallback;
 import com.connectapp.user.volley.VolleyTaskManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,9 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChatContactsActivity extends AppCompatActivity implements ServerResponseCallback {
@@ -139,4 +153,7 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
     public void onError() {
 
     }
+
+
+
 }

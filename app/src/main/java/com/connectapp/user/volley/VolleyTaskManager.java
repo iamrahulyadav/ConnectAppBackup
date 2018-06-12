@@ -305,6 +305,20 @@ public class VolleyTaskManager extends ServiceConnector {
         makeJsonObjReq(method, url, paramsMap);
     }
 
+
+    /**
+     * POST method to update user profile -->
+     **/
+    public void doUpdateUserProfile(HashMap<String, String> paramsMap, boolean isToHideDialog) {
+        this.isToHideDialog = isToHideDialog;
+        String url = getBaseURL() + "fetchProfile";
+        int method = Method.POST;
+
+        Log.e("url", url);
+        System.out.println(paramsMap);
+        makeJsonObjReq(method, url, paramsMap);
+    }
+
     private void generateNoteOnSD(Context context, String sFileName, String sBody) {
         try {
             File root = new File(Environment.getExternalStorageDirectory(), "Notes");
