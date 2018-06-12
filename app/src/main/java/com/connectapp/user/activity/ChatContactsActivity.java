@@ -12,11 +12,8 @@ import android.view.View;
 
 import com.connectapp.user.R;
 import com.connectapp.user.adapter.ChatContactsAdapter;
-import com.connectapp.user.adapter.ChatFirebaseAdapter;
 import com.connectapp.user.data.ParseFirebaseData;
-import com.connectapp.user.data.UserModel;
 import com.connectapp.user.model.Friend;
-import com.connectapp.user.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -54,14 +51,6 @@ public class ChatContactsActivity extends AppCompatActivity {
 
         verifyUserLogin();
         pfbd = new ParseFirebaseData(this);
-       /* DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_CHILD);
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String totalData = dataSnapshot.getValue().toString();
-                Log.e("Firebase", "Response JSON: " + totalData);
-                // TODO: 25-05-2017 if number of items is 0 then show something else*/
-
     }
 
     private void initView() {
@@ -124,45 +113,5 @@ public class ChatContactsActivity extends AppCompatActivity {
                 Snackbar.make(getWindow().getDecorView(), "Could not connect", Snackbar.LENGTH_LONG).show();
             }
         });
-       /* DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users");
-        ref.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of users in datasnapshot
-
-                        Log.e("Data2", "Json2: " + dataSnapshot.getValue());
-                        //collectPhoneNumbers((Map<String,Object>) dataSnapshot.getValue());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //handle databaseError
-                    }
-                });*/
-
-        /*firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE), userModel.getName(), this, Util.fetchUserClass(mContext).getEmail(), true);
-
-        firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = firebaseAdapter.getItemCount();
-                int lastVisiblePosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
-                if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) &&
-                                lastVisiblePosition == (positionStart - 1))) {
-                    rvListMessage.scrollToPosition(positionStart);
-                }
-
-               *//* if (!(friendlyMessageCount > 0))
-                    llWelcomeMsg.setVisibility(View.VISIBLE);
-
-                else
-                    llWelcomeMsg.setVisibility(View.GONE);*//*
-            }
-        });
-        rvListMessage.setLayoutManager(mLinearLayoutManager);
-        rvListMessage.setAdapter(firebaseAdapter);*/
     }
 }

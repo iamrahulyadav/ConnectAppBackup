@@ -207,6 +207,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyCompatTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyCompatTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".youtube.PlayVideoActivity"

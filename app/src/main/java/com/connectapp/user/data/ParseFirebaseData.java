@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Bibaswann on 23-06-2017.
+ * Created by ritwik-rai on 23-06-2017.
  */
 
 public class ParseFirebaseData {
@@ -25,11 +25,11 @@ public class ParseFirebaseData {
             String[] temp = oneUser.replace("}", "").split("[{]");
             String[] userParts = temp[temp.length - 1].split(",");
             for (String part : userParts) {
-                if (part.split("=")[0].trim().equals("name"))
+                if (part.split("=")[0].trim().equals("displayName"))
                     name = part.split("=")[1].trim();
-                if (part.split("=")[0].trim().equals("id"))
+                if (part.split("=")[0].trim().equals("uid"))
                     id = part.split("=")[1].trim();
-                if (part.split("=")[0].trim().equals("photo"))
+                if (part.split("=")[0].trim().equals("photoUrl"))
                     photo = part.split("=")[1].trim();
             }
             if (!set.readSetting("myid").equals(id))

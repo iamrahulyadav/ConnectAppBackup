@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.connectapp.user.R;
 import com.connectapp.user.adapter.DrawerAdapter;
@@ -112,8 +113,10 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
 
         View headerView = getLayoutInflater().inflate(R.layout.header_navigation_drawer_social, mDrawerList, false);
         RobotoTextView robotoTextView = (RobotoTextView) headerView.findViewById(R.id.tv_userName);
+        ImageView iv_editProfile = (ImageView) headerView.findViewById(R.id.iv_editProfile);
         if (userClass != null)
             robotoTextView.setText(userClass.getName());
+
         ImageView iv = (ImageView) headerView.findViewById(R.id.image);
 
         ImageUtil.displayRoundImage(iv, "", null);
@@ -144,6 +147,12 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             displayView(1);
         }
 
+        iv_editProfile.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(mContext, ProfileActivity.class));
+            }
+        });
 
     }
 
@@ -159,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -508,7 +516,6 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             case R.id.tv_stateCode:
                 startActivityForResult(new Intent(this.mContext, StateCodeActivity.class), 11);
                 break;
-
             default:
                 break;
         }
