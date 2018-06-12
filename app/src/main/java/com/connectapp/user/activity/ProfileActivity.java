@@ -3,9 +3,11 @@ package com.connectapp.user.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.connectapp.user.R;
@@ -20,7 +22,8 @@ import java.util.HashMap;
 public class ProfileActivity extends AppCompatActivity implements ServerResponseCallback {
 
     private Context mContext;
-    private TextView tv_name, tv_phone, tv_email;
+    private TextView tv_name;
+    private EditText tv_phone, tv_email;
     private VolleyTaskManager volleyTaskManager;
     private boolean isFetchProfileService = false, isUpdateProfileService = false;
 
@@ -42,9 +45,9 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("  Edit Profile");
 
-        tv_name= findViewById(R.id.tv_name);
-        tv_phone= findViewById(R.id.tv_phone);
-        tv_email= findViewById(R.id.tv_email);
+        tv_name = (TextView) findViewById(R.id.tv_name);
+        tv_phone = (EditText) findViewById(R.id.tv_phone);
+        tv_email = (EditText) findViewById(R.id.tv_email);
 
         volleyTaskManager = new VolleyTaskManager(mContext);
 
@@ -60,11 +63,15 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
     }
 
     public void onEditPhoneClick(View view) {
-
+        tv_phone.setEnabled(true);
+        tv_phone.setInputType(InputType.TYPE_CLASS_TEXT);
+        tv_phone.setFocusable(true);
     }
 
     public void onEditEmailClick(View view) {
-
+        tv_email.setEnabled(true);
+        tv_email.setInputType(InputType.TYPE_CLASS_TEXT);
+        tv_email.setFocusable(true);
     }
 
     @Override
@@ -108,6 +115,14 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
         tv_name.setText("" + name);
         tv_phone.setText("+91 " + phone);
         tv_email.setText("" + email);
+
+        tv_phone.setEnabled(false);
+        tv_phone.setInputType(InputType.TYPE_NULL);
+        tv_phone.setFocusable(false);
+
+        tv_email.setEnabled(false);
+        tv_email.setInputType(InputType.TYPE_NULL);
+        tv_email.setFocusable(false);
     }
 
     @Override

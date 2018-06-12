@@ -70,7 +70,7 @@
             android:layout_marginRight="13dp"
             android:orientation="horizontal">
 
-            <TextView
+            <EditText
                 android:id="@+id/tv_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
             android:layout_marginRight="13dp"
             android:orientation="horizontal">
 
-            <TextView
+            <EditText
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

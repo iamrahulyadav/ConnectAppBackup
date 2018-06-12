@@ -14,6 +14,8 @@ import com.connectapp.user.R;
 import com.connectapp.user.adapter.ChatContactsAdapter;
 import com.connectapp.user.data.ParseFirebaseData;
 import com.connectapp.user.model.Friend;
+import com.connectapp.user.volley.ServerResponseCallback;
+import com.connectapp.user.volley.VolleyTaskManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,17 +24,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatContactsActivity extends AppCompatActivity {
+public class ChatContactsActivity extends AppCompatActivity implements ServerResponseCallback {
 
     private Context mContext;
 
-    List<Friend> friendList;
+    //List<Friend> friendList;
 
     public static final String USERS_CHILD = "users";
-    ParseFirebaseData pfbd;
+    // ParseFirebaseData pfbd;
 
     private ChatContactsAdapter mAdapter;
     private RecyclerView recyclerView;
@@ -41,16 +45,20 @@ public class ChatContactsActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mFirebaseDatabaseReference;
 
+    private VolleyTaskManager volleyTaskManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_contacts);
         mContext = ChatContactsActivity.this;
         initView();
-        friendList = new ArrayList<>();
+        //friendList = new ArrayList<>();
 
         verifyUserLogin();
-        pfbd = new ParseFirebaseData(this);
+        //pfbd = new ParseFirebaseData(this);
+
+        volleyTaskManager = new VolleyTaskManager(mContext);
     }
 
     private void initView() {
@@ -74,9 +82,12 @@ public class ChatContactsActivity extends AppCompatActivity {
             finish();
         } else {
             //userModel = new UserModel(mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getUid());
-            readMessagensFirebase();
+            //readMessagensFirebase();
+
+            fetchChatUserContacts();
         }
     }
+
 
     public void bindView() {
         try {
@@ -87,7 +98,7 @@ public class ChatContactsActivity extends AppCompatActivity {
 
     /**
      * Read collections chatmodel Firebase
-     */
+     *//*
     private void readMessagensFirebase() {
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         mFirebaseDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -113,5 +124,19 @@ public class ChatContactsActivity extends AppCompatActivity {
                 Snackbar.make(getWindow().getDecorView(), "Could not connect", Snackbar.LENGTH_LONG).show();
             }
         });
+    }*/
+    private void fetchChatUserContacts() {
+
+
+    }
+
+    @Override
+    public void onSuccess(JSONObject resultJsonObject) {
+
+    }
+
+    @Override
+    public void onError() {
+
     }
 }
