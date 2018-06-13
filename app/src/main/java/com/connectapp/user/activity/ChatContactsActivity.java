@@ -8,7 +8,10 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.connectapp.user.R;
 import com.connectapp.user.adapter.FriendsListAdapter;
@@ -41,11 +44,23 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
     private VolleyTaskManager volleyTaskManager;
 
     private FriendsListAdapter adapter;
+    private LinearLayout ll_searchLayout;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_contacts);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("  ConnectApp Chat");
         // Assign context
         mContext = ChatContactsActivity.this;
         // Iniialize volley class
@@ -58,6 +73,8 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
 
     private void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewContacts);
+
+        ll_searchLayout = (LinearLayout) findViewById(R.id.ll_searchLayout);
 
         // use a linear layout manager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -185,6 +202,16 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
                     Util.saveStudentList(mContext, studentList);
                 }
 
+                //Set filter for Search
+                final ArrayList<ChatContact> studentNewList = studentList.studentsArrayList;
+                ll_searchLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, SearchViewActivity.class);
+                        intent.putExtra("students", studentNewList);
+                        startActivity(intent);
+                    }
+                });
 
                 // Set Students List View and Adapter
                 adapter = new FriendsListAdapter(mContext, studentList.studentsArrayList);
