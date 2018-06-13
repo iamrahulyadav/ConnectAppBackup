@@ -25,6 +25,7 @@ import com.connectapp.user.R;
 import com.connectapp.user.adapter.ChatContactsAdapter;
 import com.connectapp.user.data.ParseFirebaseData;
 import com.connectapp.user.model.Friend;
+import com.connectapp.user.util.AlertDialogCallBack;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.volley.ServerResponseCallback;
 import com.connectapp.user.volley.VolleyTaskManager;
@@ -47,17 +48,11 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
 
     private Context mContext;
 
-    //List<Friend> friendList;
-
-    public static final String USERS_CHILD = "users";
-    // ParseFirebaseData pfbd;
-
-    private ChatContactsAdapter mAdapter;
     private RecyclerView recyclerView;
+
     //Firebase and GoogleApiClient
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
-    private DatabaseReference mFirebaseDatabaseReference;
 
     private VolleyTaskManager volleyTaskManager;
 
@@ -65,14 +60,14 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_contacts);
+        // Assign context
         mContext = ChatContactsActivity.this;
-        initView();
-        //friendList = new ArrayList<>();
-
-        verifyUserLogin();
-        //pfbd = new ParseFirebaseData(this);
-
+        // Iniialize volley class
         volleyTaskManager = new VolleyTaskManager(mContext);
+        // Initialize UI components
+        initView();
+        // Verify Firebase Login
+        verifyUserLogin();
     }
 
     private void initView() {
@@ -92,60 +87,56 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser == null) {
+            // User could not be verified.
             // startActivity(new Intent(this, SigninActivity.class));
-            finish();
-        } else {
-            //userModel = new UserModel(mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getUid());
-            //readMessagensFirebase();
+            Util.showCallBackMessageWithOkCallback(mContext, "Your gmail account cannot be verified at the moment.", new AlertDialogCallBack() {
+                @Override
+                public void onSubmit() {
+                    finish();
+                }
 
+                @Override
+                public void onCancel() {
+
+                }
+            });
+
+        } else {
+            // User verified.
             fetchChatUserContacts();
         }
     }
 
 
-    public void bindView() {
-        try {
-            mAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-        }
-    }
-
-    /**
-     * Read collections chatmodel Firebase
-     *//*
-    private void readMessagensFirebase() {
-        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-        mFirebaseDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String totalData = dataSnapshot.getValue().toString();
-                Log.e("FIREBASE", "DATA: " + totalData);
-                mAdapter = new ChatContactsAdapter(mContext, pfbd.getUserList(totalData));
-                recyclerView.setAdapter(mAdapter);
-
-                mAdapter.setOnItemClickListener(new ChatContactsAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, Friend obj, int position) {
-                        // ActivityChatDetails.navigate((ActivitySelectFriend) ActivitySelectFriend.this, findViewById(R.id.lyt_parent), obj);
-                    }
-                });
-
-                bindView();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Snackbar.make(getWindow().getDecorView(), "Could not connect", Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }*/
     private void fetchChatUserContacts() {
 
+        HashMap<String, String> requestMap = new HashMap<>();
+        requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
+        volleyTaskManager.doFetchChatContacts(requestMap, true);
 
     }
 
     @Override
     public void onSuccess(JSONObject resultJsonObject) {
+
+        if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+
+
+        } else {
+            Util.showCallBackMessageWithOkCallback(ChatContactsActivity.this, "Something went wrong. Please try again later.", new AlertDialogCallBack() {
+                @Override
+                public void onSubmit() {
+                    // Exit
+                    finish();
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            });
+        }
+
 
     }
 
@@ -153,7 +144,6 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
     public void onError() {
 
     }
-
 
 
 }

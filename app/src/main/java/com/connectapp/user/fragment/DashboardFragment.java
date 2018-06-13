@@ -1,6 +1,5 @@
 package com.connectapp.user.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,12 +19,9 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.connectapp.user.R;
-import com.connectapp.user.activity.ChatActivity;
 import com.connectapp.user.activity.ChatContactsActivity;
 import com.connectapp.user.activity.ComingSoonActivity;
-import com.connectapp.user.activity.GoogleSignInActivity;
 import com.connectapp.user.activity.KeyWordActivity;
-import com.connectapp.user.activity.MainActivity;
 import com.connectapp.user.activity.RathFormActivity;
 import com.connectapp.user.activity.ResourcesActivity;
 import com.connectapp.user.activity.SchoolFormActivity;
@@ -36,11 +32,11 @@ import com.connectapp.user.data.Thread;
 import com.connectapp.user.data.Threads;
 import com.connectapp.user.data.User;
 import com.connectapp.user.data.UserClass;
-import com.connectapp.user.dropDownActivity.StateCodeActivity;
 import com.connectapp.user.members.MembersDirectory;
 import com.connectapp.user.syncadapter.DBConstants;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.volley.PostWithJsonWebTask;
+import com.connectapp.user.volley.ServerResponseCallback;
 import com.connectapp.user.volley.ServerResponseStringCallback;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -107,7 +103,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
 
             //volleyTaskManager.doPostFetchThreads(requestMap, true);
 
-            PostWithJsonWebTask.callPostWithJsonWebtask(getActivity(), Consts.FETCH_THREADS_URL, requestMap,
+            PostWithJsonWebTask.callPostWithStringReqWebtask(getActivity(), Consts.FETCH_THREADS_URL, requestMap,
                     new ServerResponseStringCallback() {
 
                         @Override
@@ -380,34 +376,47 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        //Log.e(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         hideProgressDialog();
                         if (!task.isSuccessful()) {
 
                             Log.e(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(mContext, "Authentication failed", Toast.LENGTH_SHORT).show();
-                            // Util.initToast(mContext, "Authentication failed");
                         } else {
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
                             addUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
                             String instanceId = FirebaseInstanceId.getInstance().getToken();
 
-                            Intent intent = new Intent(mContext, ChatContactsActivity.class);
-                            //intent.putExtra("thread", threadList.get(position));
-                            startActivity(intent);
-
-                            //TODO Call update user API to update firebase id, email etc.
-                           /* HashMap<String, String> requestMap = new HashMap<>();
+                            // Call update user API to update firebase id, email etc.
+                            HashMap<String, String> requestMap = new HashMap<>();
+                            requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
                             requestMap.put("emailID", "" + acct.getEmail());
-                            requestMap.put("mobile", "" + Util.fetchUserClass(mContext).getPhone());
-                            requestMap.put("name", "" + acct.getDisplayName());
-                            requestMap.put("fid", mFirebaseAuth.getCurrentUser().getUid());
-                            requestMap.put("img", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
-                            requestMap.put("deviceToken",""+instanceId);
+                            requestMap.put("imageUrl", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
+                            requestMap.put("firebaseID", mFirebaseAuth.getCurrentUser().getUid());
+                            requestMap.put("firebaseInstanceID", "" + acct.getId());
+                            // requestMap.put("deviceToken", "" + instanceId);
                             Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
-                            volleyTaskManager.doRegistration(requestMap, true);*/
+                            Log.e("Request", "" + new JSONObject(requestMap));
+                            // volleyTaskManager.doRegistration(requestMap, true);
                             //Toast.makeText(mContext,"Logging in! Please wait...",Toast.LENGTH_SHORT).show();
+                            PostWithJsonWebTask.callPostWithJsonObjectWebtask(getActivity(), Consts.UPDATE_CHAT_PROFILE, requestMap, new ServerResponseCallback() {
+                                @Override
+                                public void onSuccess(JSONObject resultJsonObject) {
+                                    Log.e("onSuccess", "resultJsonObject: " + resultJsonObject);
+                                    if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+                                        Intent intent = new Intent(mContext, ChatContactsActivity.class);
+                                        startActivity(intent);
+
+                                    } else {
+                                        Util.showMessageWithOk(getActivity(), "Something went wrong and please try again.");
+                                    }
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            }, true, Request.Method.POST);
 
                         }
                     }
@@ -415,6 +424,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
     }
 
 
+    // Add user to firebase User list [Table Name ==>> users]
     private void addUserToDatabase(FirebaseUser firebaseUser) {
         User user = new User(
                 firebaseUser.getDisplayName(),

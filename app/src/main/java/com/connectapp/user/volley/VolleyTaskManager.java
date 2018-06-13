@@ -212,7 +212,7 @@ public class VolleyTaskManager extends ServiceConnector {
 
     public void doLogin(HashMap<String, String> paramsMap, boolean isToHideDialog) {
         this.isToHideDialog = isToHideDialog;
-        String url = getBaseURL() + "login";
+        String url = Consts.LOGIN_URL;
         int method = Method.POST;
 
         Log.e("url", url);
@@ -226,7 +226,7 @@ public class VolleyTaskManager extends ServiceConnector {
 
     public void doRegistration(HashMap<String, String> paramsMap, boolean isToHideDialog) {
         this.isToHideDialog = isToHideDialog;
-        String url = getBaseURL() + "registration";
+        String url = Consts.REGISTRATION_URL;
         int method = Method.POST;
 
         Log.e("url", url);
@@ -297,7 +297,7 @@ public class VolleyTaskManager extends ServiceConnector {
      **/
     public void doFetchUserProfile(HashMap<String, String> paramsMap, boolean isToHideDialog) {
         this.isToHideDialog = isToHideDialog;
-        String url = getBaseURL() + "fetchProfile";
+        String url = Consts.FETCH_PROFILE_URL;
         int method = Method.POST;
 
         Log.e("url", url);
@@ -311,7 +311,20 @@ public class VolleyTaskManager extends ServiceConnector {
      **/
     public void doUpdateUserProfile(HashMap<String, String> paramsMap, boolean isToHideDialog) {
         this.isToHideDialog = isToHideDialog;
-        String url = getBaseURL() + "fetchProfile";
+        String url = Consts.UPDATE_PROFILE_URL;
+        int method = Method.POST;
+
+        Log.e("url", url);
+        System.out.println(paramsMap);
+        makeJsonObjReq(method, url, paramsMap);
+    }
+
+    /**
+     * POST method to update user profile -->
+     **/
+    public void doFetchChatContacts(HashMap<String, String> paramsMap, boolean isToHideDialog) {
+        this.isToHideDialog = isToHideDialog;
+        String url = Consts.FETCH_CHAT_CONTACTS_URL;
         int method = Method.POST;
 
         Log.e("url", url);
