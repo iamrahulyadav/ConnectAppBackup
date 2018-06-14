@@ -37,19 +37,10 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel, Chat
     private String nameUser;
     private String userEmail;
 
-    //Admin
-    public ChatFirebaseAdapter(DatabaseReference ref, String nameUser, ClickListenerChatFirebase mClickListenerChatFirebase, String studentEmail, String userEmail) {
-
-        super(ChatModel.class, R.layout.item_message_left, ChatFirebaseAdapter.MyChatViewHolder.class, ref.orderByChild("keyMap").equalTo("admin" + studentEmail));
-        this.nameUser = nameUser;
-        this.userEmail = userEmail;
-        this.mClickListenerChatFirebase = mClickListenerChatFirebase;
-    }
-
     //Student
-    public ChatFirebaseAdapter(DatabaseReference ref, String nameUser, ClickListenerChatFirebase mClickListenerChatFirebase, String email, boolean val) {
+    public ChatFirebaseAdapter(DatabaseReference ref, String nameUser, ClickListenerChatFirebase mClickListenerChatFirebase, String email, String receiverEmail, String keyMap, boolean val) {
 
-        super(ChatModel.class, R.layout.item_message_left, ChatFirebaseAdapter.MyChatViewHolder.class, ref.orderByChild("keyMap").equalTo("admin" + email));
+        super(ChatModel.class, R.layout.item_message_left, ChatFirebaseAdapter.MyChatViewHolder.class, ref.orderByChild("keyMap").equalTo(keyMap));
 
         this.nameUser = nameUser;
         this.userEmail = email;

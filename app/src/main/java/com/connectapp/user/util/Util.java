@@ -41,6 +41,7 @@ import com.connectapp.user.data.Threads;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.font.RobotoTextView;
 import com.connectapp.user.model.ChatContactList;
+import com.connectapp.user.model.UserChatClass;
 
 /**
  * @author raisahab.ritwik Utility class
@@ -53,6 +54,7 @@ public class Util {
     private static String OFFLINEKEYWORDS = "OFFLINEKEYWORDS";
     private static String OFFLINEDATA = "OFFLINEDATA";
     private static String CHATCLASS = "CHATCLASS";
+    private static String USERCHATCLASS = "USERCHATCLASS";
 
     private static int CONNECTIONTIMEOUT = 8000;
     private static StringBuilder sb = null;
@@ -61,6 +63,7 @@ public class Util {
     private static final String PREF_NAME_KEYWORDS = "KeywordsFTSPrefs";
     private static final String PREF_NAME_DATA = "DataFTSPrefs";
     private static final String CHAT_PREFS = "ChatPrefs";
+    private static final String PREF_NAME_USER_CHAT = "UserChatPrefs";
 
 
     /**
@@ -496,6 +499,41 @@ public class Util {
 
         return userClass;
     }
+
+    /**
+     * Saving UserChatClass details
+     **/
+    public static void saveUserChatClass(final Context mContext, UserChatClass userClass) {
+        SharedPreferences LastMilePrefs = mContext.getSharedPreferences(PREF_NAME_USER_CHAT, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = LastMilePrefs.edit();
+        try {
+            prefsEditor.putString(USERCHATCLASS, ObjectSerializer.serialize(userClass));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        prefsEditor.commit();
+    }
+
+    /**
+     * Fetching UserChatClass details
+     **/
+    public static UserChatClass fetchUserChatClass(final Context mContext) {
+        SharedPreferences LastMilePrefs = mContext.getSharedPreferences(PREF_NAME_USER_CHAT, Context.MODE_PRIVATE);
+        UserChatClass userClass = null;
+        String serializeOrg = LastMilePrefs.getString(USERCHATCLASS, null);
+        try {
+            if (serializeOrg != null) {
+                userClass = (UserChatClass) ObjectSerializer.deserialize(serializeOrg);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return userClass;
+    }
+
 
     /**
      * Saving PrefUtilsClass details

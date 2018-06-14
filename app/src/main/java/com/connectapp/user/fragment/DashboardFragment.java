@@ -33,6 +33,7 @@ import com.connectapp.user.data.Threads;
 import com.connectapp.user.data.User;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.members.MembersDirectory;
+import com.connectapp.user.model.UserChatClass;
 import com.connectapp.user.syncadapter.DBConstants;
 import com.connectapp.user.util.AlertDialogCallBack;
 import com.connectapp.user.util.Util;
@@ -404,6 +405,20 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                                 public void onSuccess(JSONObject resultJsonObject) {
                                     Log.e("onSuccess", "resultJsonObject: " + resultJsonObject);
                                     if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+                                        // Save userChat details
+                                        UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                                        if (userChatClass == null)
+                                            userChatClass = new UserChatClass();
+
+                                        userChatClass.displayName = "" + mFirebaseAuth.getCurrentUser().getDisplayName();
+                                        userChatClass.profileUrl = "" + mFirebaseAuth.getCurrentUser().getPhotoUrl();
+                                        userChatClass.setEmail("" + mFirebaseAuth.getCurrentUser().getEmail());
+                                        userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
+                                        userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
+                                        String instanceId = FirebaseInstanceId.getInstance().getToken();
+                                        userChatClass.firebaseInstanceId= instanceId;
+                                        Util.saveUserChatClass(mContext, userChatClass);
+                                        // Goto ChatContactsActivity
                                         Intent intent = new Intent(mContext, ChatContactsActivity.class);
                                         startActivity(intent);
 
@@ -460,7 +475,18 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
 
         } else {
             // User verified.
-            //User already logged in
+           /* //User already logged in
+            UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+            if (userChatClass == null)
+                userChatClass = new UserChatClass();
+
+            userChatClass.displayName = "" + mFirebaseAuth.getCurrentUser().getDisplayName();
+            userChatClass.profileUrl = "" + mFirebaseAuth.getCurrentUser().getPhotoUrl();
+            userChatClass.setEmail("" + mFirebaseAuth.getCurrentUser().getEmail());
+            userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
+            userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
+            Util.saveUserChatClass(mContext, userChatClass);*/
+
             openChatPage();
         }
     }
@@ -489,6 +515,20 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                 public void onSuccess(JSONObject resultJsonObject) {
                     Log.e("onSuccess", "resultJsonObject: " + resultJsonObject);
                     if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+                        // Save userChat details
+                        UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                        if (userChatClass == null)
+                            userChatClass = new UserChatClass();
+
+                        userChatClass.displayName = "" + mFirebaseAuth.getCurrentUser().getDisplayName();
+                        userChatClass.profileUrl = "" + mFirebaseAuth.getCurrentUser().getPhotoUrl();
+                        userChatClass.setEmail("" + mFirebaseAuth.getCurrentUser().getEmail());
+                        userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
+                        userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
+                        String instanceId = FirebaseInstanceId.getInstance().getToken();
+                        userChatClass.firebaseInstanceId= instanceId;
+                        Util.saveUserChatClass(mContext, userChatClass);
+                        // Goto ChatContactsActivity
                         Intent intent = new Intent(mContext, ChatContactsActivity.class);
                         startActivity(intent);
 

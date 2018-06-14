@@ -5,6 +5,11 @@ import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.connectapp.user.model.UserChatClass;
+import com.connectapp.user.util.Util;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -26,6 +31,21 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         Intent registrationComplete = new Intent(Config.REGISTRATION_COMPLETE);
         registrationComplete.putExtra("token", refreshedToken);
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+
+        UserChatClass userClass = Util.fetchUserChatClass(getApplicationContext());
+        if (userClass == null)
+            userClass = new UserChatClass();
+        userClass.firebaseInstanceId = refreshedToken;
+        Util.saveUserChatClass(getApplicationContext(), userClass);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(firebaseUser.getUid())
+                    .child("instanceId")
+                    .setValue(refreshedToken);
+        }
     }
 
     private void sendRegistrationToServer(final String token) {

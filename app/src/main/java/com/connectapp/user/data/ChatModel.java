@@ -24,24 +24,10 @@ public class ChatModel {
     }
 
     //Student Chat
-    public ChatModel(UserModel userModel, String message, String to_firebaseId, String from_firebaseId, String instanceId, String senderEmail, String timeStamp, FileModel file) {
+    public ChatModel(UserModel userModel, String message, String to_firebaseId, String from_firebaseId, String instanceId, String senderEmail, String receiverEmail, String keyMap,String timeStamp, FileModel file) {
         this.userModel = userModel;
         this.name = userModel.getName();
-        this.keyMap = "admin" + senderEmail;
-        this.message = message;
-        this.timeStamp = timeStamp;
-        this.to_firebaseId = to_firebaseId;
-        this.from_firebaseId = from_firebaseId;
-        this.instanceId = instanceId;
-        this.senderEmail = senderEmail;
-        this.file = file;
-    }
-
-    // Admin Chat
-    public ChatModel(UserModel userModel, String message, String to_firebaseId, String from_firebaseId, String instanceId, String senderEmail, String timeStamp, FileModel file, String studentName) {
-        this.userModel = userModel;
-        this.name = userModel.getName();
-        this.keyMap = "admin" + studentName;
+        this.keyMap = keyMap;
         this.message = message;
         this.timeStamp = timeStamp;
         this.to_firebaseId = to_firebaseId;
