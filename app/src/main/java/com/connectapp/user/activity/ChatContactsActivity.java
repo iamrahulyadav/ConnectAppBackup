@@ -3,13 +3,16 @@ package com.connectapp.user.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -59,6 +62,7 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_contacts);
+        setupActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("  ConnectApp Chat");
         // Assign context
@@ -74,13 +78,36 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
     private void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewContacts);
 
-        ll_searchLayout = (LinearLayout) findViewById(R.id.ll_searchLayout);
+        // ll_searchLayout = (LinearLayout) findViewById(R.id.ll_searchLayout);
 
         // use a linear layout manager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    }
+
+    private void setupActionBar() {
+
+        // Inflate a "Done/Cancel" custom action bar view.
+        final LayoutInflater inflater = (LayoutInflater) this
+                .getSupportActionBar().getThemedContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View customActionBarView = inflater.inflate(R.layout.actionbar_chat_contacts, null);
+        customActionBarView.findViewById(R.id.title);
+        final ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setDisplayOptions(
+                ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM |
+                        ActionBar.DISPLAY_SHOW_HOME |
+                        ActionBar.DISPLAY_SHOW_TITLE);
+
+        actionBar.setCustomView(customActionBarView,
+                new ActionBar.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                )
+        );
+        ll_searchLayout = (LinearLayout) customActionBarView.findViewById(R.id.ll_searchLayout);
     }
 
     /**

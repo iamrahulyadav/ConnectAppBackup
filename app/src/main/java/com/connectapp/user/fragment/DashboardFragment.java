@@ -34,6 +34,7 @@ import com.connectapp.user.data.User;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.members.MembersDirectory;
 import com.connectapp.user.syncadapter.DBConstants;
+import com.connectapp.user.util.AlertDialogCallBack;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.volley.PostWithJsonWebTask;
 import com.connectapp.user.volley.ServerResponseCallback;
@@ -74,6 +75,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
     //Firebase and GoogleApiClient
     public static GoogleApiClient mGoogleApiClient;
     public static FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
     public static final int RC_SIGN_IN = 9001;
 
     private ProgressDialog mProgressDialog;
@@ -298,10 +300,8 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     DashboardFragment.this.startActivity(new Intent(DashboardFragment.this.mContext, ResourcesActivity.class));
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("ConnectApp Chat")) {
+                    verifyUserLogin();
 
-                    signOutFromFirebase();
-                    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                    startActivityForResult(signInIntent, RC_SIGN_IN);
 
                 }
                 /*else {
@@ -392,7 +392,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                             requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
                             requestMap.put("emailID", "" + acct.getEmail());
                             requestMap.put("imageUrl", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
-                            requestMap.put("firebaseID", mFirebaseAuth.getCurrentUser().getUid());
+                            requestMap.put("firebaseID", "" + mFirebaseAuth.getCurrentUser().getUid());
                             requestMap.put("firebaseInstanceID", "" + acct.getId());
                             // requestMap.put("deviceToken", "" + instanceId);
                             Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
@@ -442,6 +442,67 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     .child(firebaseUser.getUid())
                     .child("instanceId")
                     .setValue(instanceId);
+        }
+    }
+
+
+    /**
+     * Verify user is logged in
+     */
+    private void verifyUserLogin() {
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser == null) {
+            // User could not be verified.
+            signOutFromFirebase();
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        } else {
+            // User verified.
+            //User already logged in
+            openChatPage();
+        }
+    }
+
+    private void openChatPage() {
+        {
+
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            addUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+            String instanceId = FirebaseInstanceId.getInstance().getToken();
+
+            // Call update user API to update firebase id, email etc.
+            HashMap<String, String> requestMap = new HashMap<>();
+            requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
+            requestMap.put("emailID", "" + mFirebaseAuth.getCurrentUser().getEmail());
+            requestMap.put("imageUrl", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
+            requestMap.put("firebaseID", "" + mFirebaseAuth.getCurrentUser().getUid());
+            requestMap.put("firebaseInstanceID", "" + mFirebaseAuth.getCurrentUser().getUid());
+            // requestMap.put("deviceToken", "" + instanceId);
+            Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
+            Log.e("Request", "" + new JSONObject(requestMap));
+            // volleyTaskManager.doRegistration(requestMap, true);
+            //Toast.makeText(mContext,"Logging in! Please wait...",Toast.LENGTH_SHORT).show();
+            PostWithJsonWebTask.callPostWithJsonObjectWebtask(getActivity(), Consts.UPDATE_CHAT_PROFILE, requestMap, new ServerResponseCallback() {
+                @Override
+                public void onSuccess(JSONObject resultJsonObject) {
+                    Log.e("onSuccess", "resultJsonObject: " + resultJsonObject);
+                    if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+                        Intent intent = new Intent(mContext, ChatContactsActivity.class);
+                        startActivity(intent);
+
+                    } else {
+                        Util.showMessageWithOk(getActivity(), "Something went wrong and please try again.");
+                    }
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            }, true, Request.Method.POST);
+
         }
     }
 }

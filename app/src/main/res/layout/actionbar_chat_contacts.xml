@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
 
-<!--
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
+
+    <FrameLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="7dp"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical">
 
 
         <LinearLayout
@@ -27,6 +26,7 @@
                 android:id="@+id/ll_searchLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginRight="5dp"
                 android:background="@drawable/blue_border_box"
                 android:orientation="horizontal">
@@ -56,15 +56,5 @@
             </LinearLayout>
 
         </LinearLayout>
-
-    </android.support.design.widget.AppBarLayout>
--->
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewContacts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="7dp"
-        android:scrollbars="vertical" />
-
-</LinearLayout>
+    </FrameLayout>
+</RelativeLayout>
