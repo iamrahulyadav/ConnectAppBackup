@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -13,6 +14,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -35,31 +38,55 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.connectapp.user.R;
 import com.connectapp.user.adapter.DrawerAdapter;
 import com.connectapp.user.constant.Consts;
 import com.connectapp.user.data.OfflineSubmission;
+import com.connectapp.user.data.User;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.db.HistoryDB;
 import com.connectapp.user.dropDownActivity.StateCodeActivity;
 import com.connectapp.user.font.RobotoTextView;
 import com.connectapp.user.fragment.DashboardFragment;
+import com.connectapp.user.model.UserChatClass;
 import com.connectapp.user.syncadapter.Constant;
 import com.connectapp.user.syncadapter.DBConstants;
 import com.connectapp.user.syncadapter.OfflineDB;
 import com.connectapp.user.util.ImageUtil;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.view.MaterialRippleLayout;
+import com.connectapp.user.volley.PostWithJsonWebTask;
+import com.connectapp.user.volley.ServerResponseCallback;
 import com.connectapp.user.volley.VolleyTaskManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author raisahab.ritwik
  */
-public class MainActivity extends AppCompatActivity implements DBConstants, OnClickListener {
+public class MainActivity extends AppCompatActivity implements DBConstants, OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private String TAG = getClass().getSimpleName();
     private ListView mDrawerList;
@@ -88,6 +115,17 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
     private EditText et_sanch;
     private EditText et_upsanch;
     private EditText et_village;
+
+    //Firebase and GoogleApiClient
+    public static GoogleApiClient mGoogleApiClient;
+    public static FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    public static final int RC_SIGN_IN = 9001;
+
+    private ProgressDialog mProgressDialog;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private GoogleSignInAccount acct;
+    private DatabaseReference mDatabase;
 
 
     @Override
@@ -151,8 +189,11 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(mContext, ProfileActivity.class));
+                mDrawerLayout.closeDrawer(mDrawerList);
             }
         });
+
+        initializeFirebaseComponents();
 
     }
 
@@ -162,11 +203,35 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_dashboard, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        } else if (item.getItemId() == R.id.menu_chat) {
+            if (Util.isInternetAvailable(mContext)) {
+                verifyUserLogin();
+            } else {
+                Util.showMessageWithOk(MainActivity.this, "You do not have an active internet connection.");
+            }
+            return true;
+        } else if (item.getItemId() == R.id.menu_edit_profile) {
+            startActivity(new Intent(mContext, ProfileActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("SignIn", "onConnectionFailed:" + connectionResult);
+        Util.initToast(mContext, "Google Play Services error.");
+        hideProgressDialog();
     }
 
 
@@ -634,6 +699,261 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             this.tv_stateCode.setText(data.getStringExtra(StateCodeActivity.RESULT_STATECODE));
             this.et_anchal.requestFocus();
             Util.showSoftKeyboard(this.mContext, this.et_anchal);
+        } else if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                Toast.makeText(mContext, "Google Account Verified.", Toast.LENGTH_SHORT).show();
+                GoogleSignInAccount account = result.getSignInAccount();
+
+                showProgressDialog();
+                firebaseAuthWithGoogle(account);
+            } else {
+                Log.e("Signin", "Google Sign In failed.");
+                Toast.makeText(mContext, "Google Sign In failed.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //Pass the activity result back to the Facebook SDK
+            // mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    //      ====================================================================
+    //              ================ **** FIREBASE ****====================
+    //      ====================================================================
+    private void initializeFirebaseComponents() {
+
+        //GOOGLE LOGIN
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .enableAutoManage((FragmentActivity) mContext, 0, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+
+
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if (user != null) {
+                    String name = user.getDisplayName();
+                    Toast.makeText(mContext, "" + user.getDisplayName(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mContext, "something went wrong", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        };
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        mProgressDialog = new ProgressDialog(mContext);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("Loading...");
+    }
+
+    public void showProgressDialog() {
+        if (!mProgressDialog.isShowing())
+            mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog.isShowing())
+            mProgressDialog.dismiss();
+    }
+
+    private void signOutFromFirebase() {
+        mFirebaseAuth.signOut();
+        // Google sign out
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+    }
+
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
+        this.acct = acct;
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        hideProgressDialog();
+                        if (!task.isSuccessful()) {
+
+                            Log.e(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(mContext, "Authentication failed", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            mDatabase = FirebaseDatabase.getInstance().getReference();
+                            addUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+                            String instanceId = FirebaseInstanceId.getInstance().getToken();
+
+                            // Call update user API to update firebase id, email etc.
+                            HashMap<String, String> requestMap = new HashMap<>();
+                            requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
+                            requestMap.put("emailID", "" + acct.getEmail());
+                            requestMap.put("imageUrl", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
+                            requestMap.put("firebaseID", "" + mFirebaseAuth.getCurrentUser().getUid());
+                            requestMap.put("firebaseInstanceID", "" + acct.getId());
+                            // requestMap.put("deviceToken", "" + instanceId);
+                            Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
+                            Log.e("Request", "" + new JSONObject(requestMap));
+                            // volleyTaskManager.doRegistration(requestMap, true);
+                            //Toast.makeText(mContext,"Logging in! Please wait...",Toast.LENGTH_SHORT).show();
+                            PostWithJsonWebTask.callPostWithJsonObjectWebtask(MainActivity.this, Consts.UPDATE_CHAT_PROFILE, requestMap, new ServerResponseCallback() {
+                                @Override
+                                public void onSuccess(JSONObject resultJsonObject) {
+                                    Log.e("onSuccess", "resultJsonObject: " + resultJsonObject);
+                                    if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+                                        // Save userChat details
+                                        UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                                        if (userChatClass == null)
+                                            userChatClass = new UserChatClass();
+
+                                        userChatClass.displayName = "" + mFirebaseAuth.getCurrentUser().getDisplayName();
+                                        userChatClass.profileUrl = "" + mFirebaseAuth.getCurrentUser().getPhotoUrl();
+                                        userChatClass.setEmail("" + mFirebaseAuth.getCurrentUser().getEmail());
+                                        userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
+                                        userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
+                                        String instanceId = FirebaseInstanceId.getInstance().getToken();
+                                        userChatClass.firebaseInstanceId = instanceId;
+                                        Util.saveUserChatClass(mContext, userChatClass);
+                                        // Goto ChatContactsActivity
+                                        Intent intent = new Intent(mContext, ChatContactsActivity.class);
+                                        startActivity(intent);
+
+                                    } else {
+                                        Util.showMessageWithOk(MainActivity.this, "Something went wrong and please try again.");
+                                    }
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            }, true, Request.Method.POST);
+
+                        }
+                    }
+                });
+    }
+
+    /** Add user to firebase User list [Table Name ==>> users] **/
+    private void addUserToDatabase(FirebaseUser firebaseUser) {
+        User user = new User(
+                firebaseUser.getDisplayName(),
+                firebaseUser.getEmail(),
+                firebaseUser.getUid(),
+                firebaseUser.getPhotoUrl() == null ? "" : firebaseUser.getPhotoUrl().toString()
+        );
+
+        mDatabase.child("users")
+                .child(user.getUid()).setValue(user);
+
+        String instanceId = FirebaseInstanceId.getInstance().getToken();
+        if (instanceId != null) {
+            mDatabase.child("users")
+                    .child(firebaseUser.getUid())
+                    .child("instanceId")
+                    .setValue(instanceId);
+        }
+    }
+
+    /**
+     * Verify user is logged in
+     */
+    private void verifyUserLogin() {
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser == null) {
+            // User could not be verified.
+            signOutFromFirebase();
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        } else {
+            // User verified.
+           /* //User already logged in
+            UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+            if (userChatClass == null)
+                userChatClass = new UserChatClass();
+
+            userChatClass.displayName = "" + mFirebaseAuth.getCurrentUser().getDisplayName();
+            userChatClass.profileUrl = "" + mFirebaseAuth.getCurrentUser().getPhotoUrl();
+            userChatClass.setEmail("" + mFirebaseAuth.getCurrentUser().getEmail());
+            userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
+            userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
+            Util.saveUserChatClass(mContext, userChatClass);*/
+
+            openChatPage();
+        }
+    }
+
+    private void openChatPage() {
+        {
+
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            addUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+            String instanceId = FirebaseInstanceId.getInstance().getToken();
+
+            // Call update user API to update firebase id, email etc.
+            HashMap<String, String> requestMap = new HashMap<>();
+            requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
+            requestMap.put("emailID", "" + mFirebaseAuth.getCurrentUser().getEmail());
+            requestMap.put("imageUrl", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
+            requestMap.put("firebaseID", "" + mFirebaseAuth.getCurrentUser().getUid());
+            requestMap.put("firebaseInstanceID", "" + mFirebaseAuth.getCurrentUser().getUid());
+            // requestMap.put("deviceToken", "" + instanceId);
+            Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
+            Log.e("Request", "" + new JSONObject(requestMap));
+            // volleyTaskManager.doRegistration(requestMap, true);
+            //Toast.makeText(mContext,"Logging in! Please wait...",Toast.LENGTH_SHORT).show();
+            PostWithJsonWebTask.callPostWithJsonObjectWebtask(MainActivity.this, Consts.UPDATE_CHAT_PROFILE, requestMap, new ServerResponseCallback() {
+                @Override
+                public void onSuccess(JSONObject resultJsonObject) {
+                    Log.e("onSuccess", "resultJsonObject: " + resultJsonObject);
+                    if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
+                        // Save userChat details
+                        UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                        if (userChatClass == null)
+                            userChatClass = new UserChatClass();
+
+                        userChatClass.displayName = "" + mFirebaseAuth.getCurrentUser().getDisplayName();
+                        userChatClass.profileUrl = "" + mFirebaseAuth.getCurrentUser().getPhotoUrl();
+                        userChatClass.setEmail("" + mFirebaseAuth.getCurrentUser().getEmail());
+                        userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
+                        userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
+                        String instanceId = FirebaseInstanceId.getInstance().getToken();
+                        userChatClass.firebaseInstanceId = instanceId;
+                        Util.saveUserChatClass(mContext, userChatClass);
+                        // Goto ChatContactsActivity
+                        Intent intent = new Intent(mContext, ChatContactsActivity.class);
+                        startActivity(intent);
+
+                    } else {
+                        Util.showMessageWithOk(MainActivity.this, "Something went wrong and please try again.");
+                    }
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            }, true, Request.Method.POST);
+
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage((FragmentActivity) mContext);
+        mGoogleApiClient.disconnect();
     }
 }

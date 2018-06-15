@@ -178,6 +178,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String result = idNoSpecialChar.replaceAll("[\\-\\+\\.\\^:,@]", "");
         Log.e("Previous", "Previous: " + idNoSpecialChar);
         Log.e("After", "After: " + result);
+        result = toUppercase(result);
+        Log.e("After", "UPPERCASE: " + result);
         String keyMap = sortKeyMap(result);
         Log.e("KeyMap", "KeyMap: " + keyMap);
         firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE), userModel.getName(), this, Util.fetchUserChatClass(mContext).getEmail(), receiverEmail, keyMap, true);
@@ -213,6 +215,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String result = idNoSpecialChar.replaceAll("[\\-\\+\\.\\^:,@]", "");
         Log.e("Previous", "Previous: " + idNoSpecialChar);
         Log.e("After", "After: " + result);
+        result = toUppercase(result);
+        Log.e("After", "UPPERCASE: " + result);
         String keyMap = sortKeyMap(result);
         Log.e("KeyMap", "KeyMap: " + keyMap);
         UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
@@ -280,5 +284,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         // return resultant string
         return res;
+    }
+
+    private String toUppercase(String value) {
+        StringBuilder sb = new StringBuilder(value);
+        for (int index = 0; index < sb.length(); index++) {
+            char c = sb.charAt(index);
+            if (Character.isLowerCase(c)) {
+                sb.setCharAt(index, Character.toUpperCase(c));
+            } else {
+                sb.setCharAt(index, Character.toLowerCase(c));
+            }
+        }
+        return sb.toString();
     }
 }

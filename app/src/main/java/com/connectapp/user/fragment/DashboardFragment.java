@@ -140,7 +140,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage((FragmentActivity) getActivity(), this)
+                .enableAutoManage((FragmentActivity) getActivity(),1, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -416,7 +416,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                                         userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
                                         userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
                                         String instanceId = FirebaseInstanceId.getInstance().getToken();
-                                        userChatClass.firebaseInstanceId= instanceId;
+                                        userChatClass.firebaseInstanceId = instanceId;
                                         Util.saveUserChatClass(mContext, userChatClass);
                                         // Goto ChatContactsActivity
                                         Intent intent = new Intent(mContext, ChatContactsActivity.class);
@@ -526,7 +526,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                         userChatClass.firebaseId = "" + mFirebaseAuth.getCurrentUser().getUid();
                         userChatClass.setUserId(Util.fetchUserClass(mContext).getUserId());
                         String instanceId = FirebaseInstanceId.getInstance().getToken();
-                        userChatClass.firebaseInstanceId= instanceId;
+                        userChatClass.firebaseInstanceId = instanceId;
                         Util.saveUserChatClass(mContext, userChatClass);
                         // Goto ChatContactsActivity
                         Intent intent = new Intent(mContext, ChatContactsActivity.class);
@@ -544,5 +544,12 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
             }, true, Request.Method.POST);
 
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage((FragmentActivity) getActivity());
+        mGoogleApiClient.disconnect();
     }
 }
