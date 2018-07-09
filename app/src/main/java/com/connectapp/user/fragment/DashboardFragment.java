@@ -99,7 +99,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
 
         TAG = mContext.getClass().getSimpleName();
 
-        if (Util.isInternetAvailable(mContext)) {
+        if (Util.isInternetAvailable(mContext) && !(Util.fetchUserClass(mContext).isOfflineLogin)) {
 
             HashMap<String, String> requestMap = new HashMap<String, String>();
             isFetchThreads = true;
@@ -126,8 +126,8 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                 updateListUI(threadList);
             }
         }
-
-        initializeFirebaseComponents();
+        //if (!Util.fetchUserClass(mContext).isOfflineLogin)
+            initializeFirebaseComponents();
 
     }
 
@@ -140,7 +140,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage((FragmentActivity) getActivity(),1, this)
+                .enableAutoManage((FragmentActivity) getActivity(), 1, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -301,8 +301,10 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     DashboardFragment.this.startActivity(new Intent(DashboardFragment.this.mContext, ResourcesActivity.class));
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("ConnectApp Chat")) {
-                    verifyUserLogin();
-
+                    if (!Util.fetchUserClass(mContext).isOfflineLogin)
+                        verifyUserLogin();
+                    else
+                        Util.showMessageWithOk(getActivity(), "Chat not available on offline mode.");
 
                 }
                 /*else {
@@ -318,7 +320,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
     private void signOutFromFirebase() {
         mFirebaseAuth.signOut();
         // Google sign out
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
     private void openKeyWordsActivity(int position) {

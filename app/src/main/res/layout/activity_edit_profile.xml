@@ -23,13 +23,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="7dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="13dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="7dp"
             android:text="Name"
             android:textColor="@color/grey_medium_dark"
             android:textSize="16sp"
@@ -56,7 +59,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="13dp"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
             android:text="Phone Number"
             android:textColor="@color/grey_medium_dark"
             android:textSize="16sp"
@@ -65,42 +70,49 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="13dp"
+            android:layout_marginBottom="7dp"
             android:layout_marginLeft="13dp"
             android:layout_marginRight="13dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+91 "
-                android:textColor="@color/grey_dark"
-                android:textSize="20sp"
-                android:typeface="sans" />
+            <!--
+                        <TextView
+                            android:id="@+id/tv_phone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/grey_dark"
+                            android:textSize="20sp"
+                            android:typeface="sans" />
+            -->
 
             <EditText
                 android:id="@+id/et_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/transparent"
                 android:imeOptions="actionDone"
                 android:inputType="number|phone"
                 android:singleLine="true"
-                android:text="+91 "
+                android:text=""
                 android:textColor="@color/grey_dark"
                 android:textSize="20sp"
-                android:typeface="sans"
-                android:visibility="gone" />
+                android:typeface="sans" />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginLeft="21dp"
-                android:onClick="onEditPhoneClick"
-                android:padding="9dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_edit"
-                android:tint="@color/grey_dark" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginRight="13dp"
+                android:background="@color/grey_medium" />
+            <!--  <ImageView
+                  android:layout_width="35dp"
+                  android:layout_height="35dp"
+                  android:layout_marginLeft="21dp"
+                  android:onClick="onEditPhoneClick"
+                  android:padding="9dp"
+                  android:scaleType="centerInside"
+                  android:src="@drawable/ic_edit"
+                  android:tint="@color/grey_dark" />-->
         </LinearLayout>
     </LinearLayout>
 
@@ -112,7 +124,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="13dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="7dp"
             android:text="Email"
             android:textColor="@color/grey_medium_dark"
             android:textSize="16sp"
@@ -121,51 +136,56 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="13dp"
+            android:layout_marginBottom="7dp"
             android:layout_marginLeft="13dp"
             android:layout_marginRight="13dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="@color/grey_dark"
                 android:textSize="20sp"
-                android:typeface="sans" />
+                android:typeface="sans" />-->
 
             <EditText
                 android:id="@+id/et_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/transparent"
                 android:imeOptions="actionDone"
                 android:inputType="textWebEmailAddress"
                 android:singleLine="true"
                 android:text=""
                 android:textColor="@color/grey_dark"
                 android:textSize="20sp"
-                android:typeface="sans"
-                android:visibility="gone" />
+                android:typeface="sans" />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginLeft="21dp"
-                android:onClick="onEditEmailClick"
-                android:padding="9dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_edit"
-                android:tint="@color/grey_dark" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginRight="13dp"
+                android:background="@color/grey_medium" />
+            <!-- <ImageView
+                 android:layout_width="35dp"
+                 android:layout_height="35dp"
+                 android:layout_marginLeft="21dp"
+                 android:onClick="onEditEmailClick"
+                 android:padding="9dp"
+                 android:scaleType="centerInside"
+                 android:src="@drawable/ic_edit"
+                 android:tint="@color/grey_dark" />-->
         </LinearLayout>
     </LinearLayout>
 
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_marginLeft="13dp"
         android:layout_marginRight="13dp"
-        android:background="@color/grey_medium" />
+        android:background="@color/grey_medium" />-->
 
     <Button
         style="@style/Base.Widget.AppCompat.Button.Colored"
@@ -174,10 +194,11 @@
         android:layout_marginLeft="13dp"
         android:layout_marginRight="13dp"
         android:layout_marginTop="13dp"
+        android:onClick="onSubmitClick"
         android:paddingBottom="7dp"
-        android:paddingTop="7dp"
-        android:text="SAve"
-        android:visibility="gone" />
+        android:paddingTop="13dp"
+        android:text="Submit"
+        android:visibility="visible" />
 
 
 </LinearLayout>

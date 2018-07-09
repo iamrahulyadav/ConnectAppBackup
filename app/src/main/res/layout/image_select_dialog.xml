@@ -24,9 +24,9 @@
                 android:id="@+id/btn_camera"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:layout_marginBottom="23dp"
                 android:layout_marginLeft="23dp"
                 android:layout_marginRight="23dp"
+                android:layout_marginBottom="13dp"
                 android:background="@drawable/blue_btn_selector"
                 android:checked="true"
                 android:gravity="center"
@@ -34,26 +34,40 @@
                 android:textColor="#ffffff"
                 android:visibility="visible" />
 
-            <!--
-                 <Button
+            <Button
                 android:id="@+id/btn_album"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:layout_margin="23dp"
+                android:layout_marginLeft="23dp"
+                android:layout_marginRight="23dp"
+                android:layout_marginBottom="13dp"
                 android:background="@drawable/blue_btn_selector"
                 android:checked="true"
                 android:gravity="center"
+                android:visibility="visible"
                 android:text="Choose Photo From Album"
-                android:textColor="#ffffff"
-                android:visibility="visible" />
-            -->
+                android:textColor="#ffffff" />
 
+            <Button
+                android:id="@+id/btn_otherFiles"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginLeft="23dp"
+                android:layout_marginRight="23dp"
+                android:layout_marginBottom="13dp"
+                android:background="@drawable/blue_btn_selector"
+                android:checked="true"
+                android:gravity="center"
+                android:visibility="visible"
+                android:text="Choose Files"
+                android:textColor="#ffffff" />
             <Button
                 android:id="@+id/btn_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:layout_marginLeft="23dp"
                 android:layout_marginRight="23dp"
+                android:layout_marginTop="13dp"
                 android:background="@drawable/red_btn_selector"
                 android:text="Cancel"
                 android:textColor="#FFFFFF" />

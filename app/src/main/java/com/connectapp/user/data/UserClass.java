@@ -22,6 +22,7 @@ public class UserClass implements Serializable {
     private String password = "";
     private boolean isRemember = false;
     private boolean isLoggedin = false;
+    public boolean isRegistered = false;
     private String message = "";
     private boolean isFirstTimeAccess = true;
     private int currentMemebersDirVersion = 0;
@@ -36,6 +37,7 @@ public class UserClass implements Serializable {
     public String adminFirebaseId = "";
     public String firebaseInstanceId = "";
     public ChatContact selectedStudent;
+    public boolean isOfflineLogin = false;
 
 
     public String getName() {

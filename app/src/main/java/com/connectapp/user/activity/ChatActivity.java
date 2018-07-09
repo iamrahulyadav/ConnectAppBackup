@@ -1,26 +1,49 @@
 package com.connectapp.user.activity;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import com.connectapp.user.BuildConfig;
 import com.connectapp.user.R;
 import com.connectapp.user.adapter.ChatFirebaseAdapter;
 import com.connectapp.user.callback.ClickListenerChatFirebase;
+import com.connectapp.user.constant.StaticConstants;
 import com.connectapp.user.data.ChatModel;
+import com.connectapp.user.data.FileModel;
+import com.connectapp.user.data.UserClass;
 import com.connectapp.user.data.UserModel;
 import com.connectapp.user.model.UserChatClass;
 import com.connectapp.user.util.Util;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,8 +52,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +72,13 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ClickListenerChatFirebase, GoogleApiClient.OnConnectionFailedListener {
 
     private Context mContext;
+    private static final int IMAGE_GALLERY_REQUEST = 1;
+    private static final int IMAGE_CAMERA_REQUEST = 2;
+    private static final int PLACE_PICKER_REQUEST = 3;
+    private static final int OTHER_FILE_REQUEST = 4;
+    //File
+    private File filePathImageCamera;
+    private boolean isFileRequest = false;
 
     //Firebase and GoogleApiClient
     private FirebaseAuth mFirebaseAuth;
@@ -75,6 +110,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     // Intent Data
     private String receiverEmail = "";
     private String receiverFirebaseID = "";
+
+    static final String TAG = ChatActivity.class.getSimpleName();
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -134,7 +171,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 sendMessageFirebase();
                 break;
             case R.id.buttonAttachFile:
-                //showAttachOptions();
+                showAttachOptions();
                 break;
         }
     }
@@ -297,5 +334,430 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return sb.toString();
+    }
+
+
+    //====== Attachments =========
+
+    private void showAttachOptions() {
+
+
+        final Dialog customDialog = new Dialog(ChatActivity.this);
+
+        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.image_select_dialog, null);
+        Button btn_album = (Button) view.findViewById(R.id.btn_album);
+        btn_album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+                photoGalleryIntent();
+            }
+        });
+
+        Button btn_camera = (Button) view.findViewById(R.id.btn_camera);
+        btn_camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+                verifyStoragePermissions();
+
+            }
+        });
+        Button btn_otherFiles = (Button) view.findViewById(R.id.btn_otherFiles);
+        btn_otherFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+                isFileRequest = true;
+                verifyStoragePermissions();
+
+            }
+        });
+
+        Button btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                customDialog.dismiss();
+            }
+        });
+
+        customDialog.setCancelable(false);
+        customDialog.setContentView(view);
+        customDialog.setCanceledOnTouchOutside(false);
+        // Start AlertDialog
+        customDialog.show();
+    }
+
+    /**
+     * Upload photo taken by camera
+     */
+    private void photoCameraIntent() {
+        String nomeFoto = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+        filePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto + "camera.jpg");
+        Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri photoURI = FileProvider.getUriForFile(ChatActivity.this,
+                BuildConfig.APPLICATION_ID + ".provider",
+                filePathImageCamera);
+        it.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        startActivityForResult(it, IMAGE_CAMERA_REQUEST);
+    }
+
+    /**
+     * Send photo from gallery
+     */
+    private void photoGalleryIntent() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture_title)), IMAGE_GALLERY_REQUEST);
+    }
+
+    /**
+     * Checks if the app has permission to write to device storage
+     * <p>
+     * If the app does not has permission then the user will be prompted to grant permissions
+     */
+    public void verifyStoragePermissions() {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(ChatActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    ChatActivity.this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        } else {
+            // we already have permission, lets go ahead and call camera intent
+            if (isFileRequest) {
+                isFileRequest = false;
+                otherFileIntent();
+            } else {
+                photoCameraIntent();
+            }
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+            case REQUEST_EXTERNAL_STORAGE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    if (isFileRequest) {
+                        isFileRequest = false;
+                        otherFileIntent();
+                    } else {
+                        photoCameraIntent();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void otherFileIntent() {
+        // Toast.makeText(mContext, "Other Files", Toast.LENGTH_SHORT).show();
+     /*   String[] mimetypes = {"application*//*|text*//*"};
+        Intent i = new Intent();*/
+        // i.setType("*/*");
+       /* i.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(i, "Choose file"), OTHER_FILE_REQUEST);*/
+
+        Intent galleryintent = new Intent();
+        if (Build.VERSION.SDK_INT < 19) {
+            galleryintent.setAction(Intent.ACTION_GET_CONTENT);
+        } else {
+            galleryintent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            galleryintent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
+        galleryintent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        galleryintent.setType("application/*|text/*");
+        startActivityForResult(galleryintent, OTHER_FILE_REQUEST);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        StorageReference storageRef = storage.getReferenceFromUrl(StaticConstants.URL_STORAGE_REFERENCE).child(StaticConstants.FOLDER_STORAGE_IMG);
+
+        if (requestCode == IMAGE_GALLERY_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Uri selectedImageUri = data.getData();
+                if (selectedImageUri != null) {
+                    sendFileFirebase(storageRef, selectedImageUri, "image");
+                } else {
+                    //URI IS NULL
+                }
+            }
+        } else if (requestCode == IMAGE_CAMERA_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (filePathImageCamera != null && filePathImageCamera.exists()) {
+                    StorageReference imageCameraRef = storageRef.child(filePathImageCamera.getName() + "_camera");
+                    sendFileFirebase(imageCameraRef, filePathImageCamera);
+                } else {
+                    //IS NULL
+                }
+            }
+        } else if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+          /*      Place place = PlacePicker.getPlace(this, data);
+                if (place!=null){
+                    LatLng latLng = place.getLatLng();
+                    MapModel mapModel = new MapModel(latLng.latitude+"",latLng.longitude+"");
+                    ChatModel chatModel = new ChatModel(userModel, Calendar.getInstance().getTime().getTime()+"",mapModel);
+                    mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
+                }else{
+                    //PLACE IS NULL
+                }*/
+            }
+        } else if (requestCode == OTHER_FILE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Uri selectedImageUri = data.getData();
+                if (selectedImageUri != null) {
+                    sendFileFirebase(storageRef, selectedImageUri, "file");
+                } else {
+                    //URI IS NULL
+                }
+            }
+        }
+        ;
+    }
+
+    private ProgressDialog fileUploadProgressBar;
+
+    /**
+     * Sends the file to the firebase
+     */
+    private void sendFileFirebase(StorageReference storageReference, final File file) {
+
+
+        if (storageReference != null) {
+            if (Util.isInternetAvailable(mContext)) {
+                fileUploadProgressBar = new ProgressDialog(mContext);
+                fileUploadProgressBar.setMessage("Sending file. Please wait...");
+                fileUploadProgressBar.setIndeterminate(false);
+                fileUploadProgressBar.setMax(100);
+                fileUploadProgressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                fileUploadProgressBar.setCancelable(false);
+                if (!fileUploadProgressBar.isShowing())
+                    fileUploadProgressBar.show();
+            }
+            Uri photoURI = FileProvider.getUriForFile(ChatActivity.this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    file);
+            UploadTask uploadTask = storageReference.putFile(photoURI);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "onFailure sendFileFirebase " + e.getMessage());
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.i(TAG, "onSuccess sendFileFirebase");
+                    UserClass userClass = Util.fetchUserClass(mContext);
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    // Create KeyMap
+                    String idNoSpecialChar = Util.fetchUserChatClass(mContext).getEmail() + receiverEmail;
+                    String result = idNoSpecialChar.replaceAll("[\\-\\+\\.\\^:,@]", "");
+                    Log.e("Previous", "Previous: " + idNoSpecialChar);
+                    Log.e("After", "After: " + result);
+                    result = toUppercase(result);
+                    Log.e("After", "UPPERCASE: " + result);
+                    String keyMap = sortKeyMap(result);
+                    Log.e("KeyMap", "KeyMap: " + keyMap);
+                    // Fetch Chat Class
+                    UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                    // Create File Model
+                    FileModel fileModel = new FileModel("img", downloadUrl.toString(), file.getName(), file.length() + "");
+                   /* ChatModel chatModel = new ChatModel(userModel, "", userClass.adminFirebaseId,
+                            userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
+                            Calendar.getInstance().getTime().getTime() + "", fileModel);*/
+
+                    ChatModel chatModel = new ChatModel(userModel, "", userChatClass.adminFirebaseId,
+                            userChatClass.firebaseId, userChatClass.firebaseInstanceId,
+                            userChatClass.getEmail(), receiverEmail, keyMap,
+                            Calendar.getInstance().getTime().getTime() + "", fileModel);
+
+                    mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    int uploadProgress = (int) progress;
+
+                    if (fileUploadProgressBar != null && fileUploadProgressBar.isShowing()) {
+                        if (uploadProgress == 100)
+                            fileUploadProgressBar.dismiss();
+                        else
+                            fileUploadProgressBar.setProgress(uploadProgress);
+                    }
+                }
+            });
+        } else {
+            //IS NULL
+        }
+
+    }
+
+    /**
+     * Sends the file to the firebase
+     */
+    private void sendFileFirebase(StorageReference storageReference, final Uri file, String type) {
+
+        if (storageReference != null) {
+
+            if (Util.isInternetAvailable(mContext)) {
+                fileUploadProgressBar = new ProgressDialog(mContext);
+                fileUploadProgressBar.setMessage("Sending file. Please wait...");
+                fileUploadProgressBar.setIndeterminate(false);
+                fileUploadProgressBar.setMax(100);
+                fileUploadProgressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                fileUploadProgressBar.setCancelable(false);
+                if (!fileUploadProgressBar.isShowing())
+                    fileUploadProgressBar.show();
+            }
+
+            if (type.equalsIgnoreCase("image")) {
+                final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+                StorageReference imageGalleryRef = storageReference.child(name + "_gallery");
+                UploadTask uploadTask = imageGalleryRef.putFile(file);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure sendFileFirebase " + e.getMessage());
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i(TAG, "onSuccess sendFileFirebase");
+                        UserClass userClass = Util.fetchUserClass(mContext);
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        // Create KeyMap
+                        String idNoSpecialChar = Util.fetchUserChatClass(mContext).getEmail() + receiverEmail;
+                        String result = idNoSpecialChar.replaceAll("[\\-\\+\\.\\^:,@]", "");
+                        Log.e("Previous", "Previous: " + idNoSpecialChar);
+                        Log.e("After", "After: " + result);
+                        result = toUppercase(result);
+                        Log.e("After", "UPPERCASE: " + result);
+                        String keyMap = sortKeyMap(result);
+                        Log.e("KeyMap", "KeyMap: " + keyMap);
+                        // Fetch Chat Class
+                        UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                        FileModel fileModel = new FileModel("img", downloadUrl.toString(), name, "");
+                       /* ChatModel chatModel = new ChatModel(userModel, "", userClass.adminFirebaseId,
+                                userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
+                                Calendar.getInstance().getTime().getTime() + "", fileModel);*/
+                        ChatModel chatModel = new ChatModel(userModel, "", userChatClass.adminFirebaseId,
+                                userChatClass.firebaseId, userChatClass.firebaseInstanceId,
+                                userChatClass.getEmail(), receiverEmail, keyMap,
+                                Calendar.getInstance().getTime().getTime() + "", fileModel);
+                        mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
+                    }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        int uploadProgress = (int) progress;
+                        if (fileUploadProgressBar != null && fileUploadProgressBar.isShowing()) {
+                            if (uploadProgress == 100)
+                                fileUploadProgressBar.dismiss();
+                            else
+                                fileUploadProgressBar.setProgress(uploadProgress);
+                        }
+                    }
+                });
+            } else if (type.equalsIgnoreCase("file")) {
+                final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+                String fileName = getFileName(file);
+                StorageReference imageGalleryRef = storageReference.child(name + "_mentorfile_" + fileName + "_gallery");
+                UploadTask uploadTask = imageGalleryRef.putFile(file);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure sendFileFirebase " + e.getMessage());
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i(TAG, "onSuccess sendFileFirebase");
+                        UserClass userClass = Util.fetchUserClass(mContext);
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        // Create KeyMap
+                        String idNoSpecialChar = Util.fetchUserChatClass(mContext).getEmail() + receiverEmail;
+                        String result = idNoSpecialChar.replaceAll("[\\-\\+\\.\\^:,@]", "");
+                        Log.e("Previous", "Previous: " + idNoSpecialChar);
+                        Log.e("After", "After: " + result);
+                        result = toUppercase(result);
+                        Log.e("After", "UPPERCASE: " + result);
+                        String keyMap = sortKeyMap(result);
+                        Log.e("KeyMap", "KeyMap: " + keyMap);
+                        // Fetch Chat Class
+                        UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
+                        FileModel fileModel = new FileModel("file", downloadUrl.toString(), name, "");
+                       /* ChatModel chatModel = new ChatModel(userModel, "", userClass.adminFirebaseId,
+                                userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
+                                Calendar.getInstance().getTime().getTime() + "", fileModel);*/
+                        ChatModel chatModel = new ChatModel(userModel, "", userChatClass.adminFirebaseId,
+                                userChatClass.firebaseId, userChatClass.firebaseInstanceId,
+                                userChatClass.getEmail(), receiverEmail, keyMap,
+                                Calendar.getInstance().getTime().getTime() + "", fileModel);
+                        mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
+                    }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        int uploadProgress = (int) progress;
+                        if (fileUploadProgressBar != null && fileUploadProgressBar.isShowing()) {
+                            if (uploadProgress == 100)
+                                fileUploadProgressBar.dismiss();
+                            else
+                                fileUploadProgressBar.setProgress(uploadProgress);
+                        }
+                    }
+                });
+            }
+        } else {
+            //IS NULL
+        }
+
+    }
+
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 }

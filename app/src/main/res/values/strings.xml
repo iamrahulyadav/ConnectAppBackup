@@ -245,4 +245,10 @@
     // Firebase DB
     <string name="settings_file_name">com.connectapp.users.temp</string>
 
+    <!--Chat-->
+    <string name="sendPhoto">Photo Camera</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="select_picture_title">Get Photo From</string>
+    <string name="sendPhotoGallery">Photo Gallery</string>
+
 </resources>

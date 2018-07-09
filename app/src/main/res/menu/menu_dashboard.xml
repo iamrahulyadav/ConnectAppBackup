@@ -16,7 +16,7 @@
         appcompat:showAsAction="always" />
     <item
         android:id="@+id/menu_edit_profile"
-        android:icon="@drawable/ic_menu_edit_profile"
+        android:icon="@drawable/ic_menu_profile"
         android:title="@string/menu_edit_profile"
         appcompat:showAsAction="always" />
 

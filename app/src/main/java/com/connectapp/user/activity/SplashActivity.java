@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.connectapp.user.R;
+import com.connectapp.user.data.UserClass;
 import com.connectapp.user.firebase.Config;
 import com.connectapp.user.syncadapter.Constant;
 import com.connectapp.user.util.AlertDialogCallBack;
@@ -101,12 +102,21 @@ public class SplashActivity extends Activity implements ServerResponseCallback {
 
         @Override
         protected void onPostExecute(Void result) {
-            if (Util.isInternetAvailable(SplashActivity.this))
-
+            if (Util.isInternetAvailable(SplashActivity.this)) {
+                UserClass userClass = Util.fetchUserClass(mContext);
+                if (userClass == null)
+                    userClass = new UserClass();
+                userClass.isOfflineLogin = false;
+                Util.saveUserClass(mContext, userClass);
                 getApplicationVersion();
-            else
+            } else {
+                UserClass userClass = Util.fetchUserClass(mContext);
+                if (userClass == null)
+                    userClass = new UserClass();
+                userClass.isOfflineLogin = true;
+                Util.saveUserClass(mContext, userClass);
                 proceedNormally();
-
+            }
         }
 
     }
@@ -161,7 +171,7 @@ public class SplashActivity extends Activity implements ServerResponseCallback {
     @Override
     public void onSuccess(JSONObject resultJsonObject) {
 
-        Log.d(TAG, "Result \n" + resultJsonObject);
+        Log.e(TAG, "Result \n" + resultJsonObject);
         if (resultJsonObject.optString("code").trim().equalsIgnoreCase("404")) {
 
             // Application version is Up to date.
@@ -190,7 +200,7 @@ public class SplashActivity extends Activity implements ServerResponseCallback {
     @Override
     public void onError() {
 
-        Util.showCallBackMessageWithOkCancel(mContext, "Server not responding. Tap ok to try again.\nor cancel to exit.",
+       /* Util.showCallBackMessageWithOkCancel(mContext, "Server not responding. Tap ok to try again.\nor cancel to exit.",
                 new AlertDialogCallBack() {
 
                     @Override
@@ -204,7 +214,14 @@ public class SplashActivity extends Activity implements ServerResponseCallback {
                         finish();
 
                     }
-                });
+                });*/
+        // Enter in Offline Mode
+        UserClass userClass = Util.fetchUserClass(mContext);
+        if (userClass == null)
+            userClass = new UserClass();
+        userClass.isOfflineLogin = true;
+        Util.saveUserClass(mContext, userClass);
+        proceedNormally();
 
     }
 
@@ -217,7 +234,7 @@ public class SplashActivity extends Activity implements ServerResponseCallback {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             int versionCode = pInfo.versionCode;
 
-            Log.d(TAG, "version code: " + versionCode);
+            Log.e(TAG, "version code: " + versionCode);
             volleyTaskManager.doGetAppVersionCodeFromPlaystore("" + versionCode);
 
         } catch (NameNotFoundException e) {
@@ -249,7 +266,7 @@ public class SplashActivity extends Activity implements ServerResponseCallback {
      * Proceed forward to the respective Activities.
      */
     private void proceedNormally() {
-        if (Util.fetchUserClass(SplashActivity.this) == null) {
+        if (Util.fetchUserClass(SplashActivity.this) == null||! Util.fetchUserClass(mContext).isRegistered) {
 
             openRegistrationActivity();
 

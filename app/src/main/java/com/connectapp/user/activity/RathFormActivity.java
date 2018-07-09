@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -150,6 +151,9 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
+        } else if (item.getItemId() == R.id.menu_help) {
+            startActivity(new Intent(mContext, GPSTutorialActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -184,6 +188,11 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_help, menu);
+        return true;
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -290,7 +299,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
      * Method to select picture from gallery.
      */
     protected void populatingSelectedPic() {
-        Log.v(TAG, "selected from gallery");
+        Log.e(TAG, "selected from gallery");
         Intent albumIntent = new Intent("android.intent.action.PICK", Media.EXTERNAL_CONTENT_URI);
         albumIntent.setType("image/*");
         startActivityForResult(albumIntent, PICTURE_GALLERY_REQUEST);
@@ -300,7 +309,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
      * Method to capture image from camera.
      */
     protected void cameraSelectedPic() {
-        Log.i(TAG, "selected from camera");
+        Log.e(TAG, "selected from camera");
 
         //camera stuff
         Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -345,30 +354,30 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
                 Matrix matrix = new Matrix();
                 switch (orientation) {
                     case CompletionEvent.STATUS_FAILURE /*1*/:
-                        Log.v("Case:", "1");
+                        Log.e("Case:", "1");
                         break;
                     case CompletionEvent.STATUS_CONFLICT /*2*/:
-                        Log.v("Case:", "2");
+                        Log.e("Case:", "2");
                         break;
                     case CompletionEvent.STATUS_CANCELED /*3*/:
-                        Log.v("Case:", "3");
+                        Log.e("Case:", "3");
                         matrix.postRotate(BitmapDescriptorFactory.HUE_CYAN);
                         break;
                     case GeofencingRequest.INITIAL_TRIGGER_DWELL /*4*/:
-                        Log.v("Case:", "4");
+                        Log.e("Case:", "4");
                         break;
                     case DetectedActivity.TILTING /*5*/:
-                        Log.v("Case:", "5");
+                        Log.e("Case:", "5");
                         break;
                     case Quest.STATE_FAILED /*6*/:
-                        Log.v("Case:", "6");
+                        Log.e("Case:", "6");
                         matrix.postRotate(90.0f);
                         break;
                     case DetectedActivity.WALKING /*7*/:
-                        Log.v("Case:", "7");
+                        Log.e("Case:", "7");
                         break;
                     case DetectedActivity.RUNNING /*8*/:
-                        Log.v("Case:", "8");
+                        Log.e("Case:", "8");
                         matrix.postRotate(-90.0f);
                         break;
                 }
@@ -415,7 +424,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         if (isGooglePlayServicesAvailable()) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (locationManager.isProviderEnabled("gps") || locationManager.isProviderEnabled("network")) {
-                Log.v("GPS Connection Found:", "true");
+                Log.e("GPS Connection Found:", "true");
                 if (mCurrentLocation == null) {
                     mProgressDialog.setMessage("Fetching present location...");
                     mProgressDialog.setCancelable(true);
@@ -492,8 +501,8 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         hideDialog();
         if (isSuccess) {
             mCurrentLocation = mLocation;
-            Log.d("Latitude", "" + mLocation.getLatitude());
-            Log.d("Longitude", "" + mLocation.getLongitude());
+            Log.e("Latitude", "" + mLocation.getLatitude());
+            Log.e("Longitude", "" + mLocation.getLongitude());
 
             if (Util.isInternetAvailable(mContext)) {
 
@@ -507,7 +516,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
             finish();
             mCurrentLocation = null;
         } else {
-            Util.showCallBackMessageWithOkCancelGPS(mContext,
+           /* Util.showCallBackMessageWithOkCancelGPS(mContext,
                     "Location not found! Please do not stay indoor. Tap OK to try again or CANCEL to exit.",
                     new AlertDialogCallBack() {
 
@@ -524,18 +533,18 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
                             finish();
 
                         }
-                    });
+                    });*/
         }
     }
 
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Connection failed: " + connectionResult.toString());
+        Log.e(TAG, "Connection failed: " + connectionResult.toString());
         Toast.makeText(this, "Connection failed: " + connectionResult.toString(), Toast.LENGTH_LONG).show();
         hideDialog();
     }
 
     public void onConnected(Bundle arg0) {
-        Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
+        Log.e(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
         startLocationUpdates();
     }
 
@@ -543,7 +552,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         fusedLocationProviderApi.requestLocationUpdates(mGoogleApiClient,
                 mLocationRequest,
                 (LocationListener) this);
-        Log.d(TAG, "Location update started ..............: ");
+        Log.e(TAG, "Location update started ..............: ");
     }
 
     public void onConnectionSuspended(int arg0) {
@@ -551,13 +560,13 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
     }
 
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Firing onLocationChanged..............................................");
-        Log.d(TAG, "Lat: " + location.getLatitude());
-        Log.d(TAG, "Lon: " + location.getLongitude());
-        Log.d(TAG, "Accuray: " + location.getAccuracy());
+        Log.e(TAG, "Firing onLocationChanged..............................................");
+        Log.e(TAG, "Lat: " + location.getLatitude());
+        Log.e(TAG, "Lon: " + location.getLongitude());
+        Log.e(TAG, "Accuray: " + location.getAccuracy());
         hideDialog();
         mCurrentLocation = location;
-        Log.v("onLocationChanged", "Geo Address: " + geoAddress);
+        Log.e("onLocationChanged", "Geo Address: " + geoAddress);
     }
 
     protected void onResume() {
@@ -591,8 +600,13 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
             formDataMap.put(DBConstants.MU_ID, Util.fetchUserClass(mContext).getUserId());
             formDataMap.put(com.connectapp.user.db.DBConstants.THREAD_ID, thread.getThreadID());
             formDataMap.put(DBConstants.IMAGE, ((ImageClass) imagesList.get(0)).getBase64value());
-            formDataMap.put("lat", "" + mCurrentLocation.getLatitude());
-            formDataMap.put("long", "" + mCurrentLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                formDataMap.put("lat", "" + mCurrentLocation.getLatitude());
+                formDataMap.put("long", "" + mCurrentLocation.getLongitude());
+            } else {
+                formDataMap.put("lat", "");
+                formDataMap.put("long", "");
+            }
             formDataMap.put(DBConstants.DATE, Util.getDate());
             formDataMap.put(DBConstants.TIME, Util.getTime());
             formDataMap.put("sCode", "");
@@ -608,8 +622,13 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
             historyCV.put(DBConstants.MU_ID, Util.fetchUserClass(mContext).getUserId());
             historyCV.put(DBConstants.THREAD_ID, thread.getThreadID());
             historyCV.put(DBConstants.IMAGE, ((ImageClass) imagesList.get(0)).getBase64value());
-            historyCV.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
-            historyCV.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                historyCV.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
+                historyCV.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            } else {
+                historyCV.put(DBConstants.LATITUDE, "");
+                historyCV.put(DBConstants.LONGITUDE, "");
+            }
             historyCV.put(DBConstants.PICTURE_CATEGORY, dropDownActivity_pictureCategory.getText().toString().trim());
             historyCV.put(DBConstants.KEYWORDS, "12,13,14");
             historyCV.put(DBConstants.ADDRESS, geoAddress);
@@ -631,8 +650,13 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
             cv.put(DBConstants.MU_ID, Util.fetchUserClass(mContext).getUserId());
             cv.put(DBConstants.THREAD_ID, thread.getThreadID());
             cv.put(DBConstants.IMAGE, ((ImageClass) imagesList.get(0)).getBase64value());
-            cv.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
-            cv.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                cv.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
+                cv.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            } else {
+                cv.put(DBConstants.LATITUDE, "");
+                cv.put(DBConstants.LONGITUDE, "");
+            }
             cv.put(DBConstants.PICTURE_CATEGORY, this.dropDownActivity_pictureCategory.getText().toString().trim());
             cv.put(DBConstants.KEYWORDS, "12,13,14");
             cv.put(DBConstants.ADDRESS, geoAddress);
@@ -649,10 +673,10 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
 
     public void onSuccess(JSONObject resultJsonObject) {
 
-        Log.d("isRathNumberService", "isRathNumberService: " + isRathNumberService);
+        Log.e("isRathNumberService", "isRathNumberService: " + isRathNumberService);
         if (isRathNumberService) {
             isRathNumberService = false;
-            Log.v(this.TAG, "" + resultJsonObject);
+            Log.e(this.TAG, "" + resultJsonObject);
             if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
                 JSONArray dataArray = resultJsonObject.optJSONArray("data");
                 PrefUtils prefUtils = new PrefUtils();
@@ -671,7 +695,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
 
         } else if (isSubmitService) {
             isSubmitService = false;
-            Log.v(this.TAG, "" + resultJsonObject);
+            Log.e(this.TAG, "" + resultJsonObject);
             if (resultJsonObject.toString() == null || resultJsonObject.toString().trim().isEmpty()) {
                 Toast.makeText(this.mContext, " Request failed. Please try again.", Toast.LENGTH_SHORT).show();
                 return;
@@ -681,7 +705,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
                 String message = "";
                 result = resultJsonObject.optString("code");
                 message = resultJsonObject.optString("msg");
-                Log.v(this.TAG, result);
+                Log.e(this.TAG, result);
                 if (result.equalsIgnoreCase("200")) {
                     new HistoryDB().saveHistoryData(mContext, historyCV);
                     Util.showCallBackMessageWithOkCallback(mContext, "Submision Complete", new SubmissionComplete());
@@ -775,10 +799,10 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
 				cursor.close();*/
 
                 String picturePath = mCapturedImageURI.getPath();
-                Log.v(this.TAG, "Picture path: " + picturePath);
+                Log.e(this.TAG, "Picture path: " + picturePath);
                 processImagePath(picturePath);
             } else if (!(requestCode == 11 || requestCode == 12)) {
-                Log.w("DialogChoosePicture", "Warning: activity result not ok");
+                Log.e("DialogChoosePicture", "Warning: activity result not ok");
                 Toast.makeText(this.mContext, "No image selected", Toast.LENGTH_LONG).show();
             }
         }
@@ -786,8 +810,8 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("onSaveInstanceState", "onSaveInstanceState");
-        Log.d("onSaveInstanceState", "Captured Uri" + mCapturedImageURI);
+        Log.e("onSaveInstanceState", "onSaveInstanceState");
+        Log.e("onSaveInstanceState", "Captured Uri" + mCapturedImageURI);
         System.out.println("------------------------------------\n");
         outState.putString("URI", "" + mCapturedImageURI);
         super.onSaveInstanceState(outState);
@@ -798,8 +822,8 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
 
         super.onRestoreInstanceState(savedInstanceState);
         System.out.println("------------------------------------\n");
-        Log.d("onRestoreInstanceState", "onRestoreInstanceState");
-        Log.d("onRestoreInstanceState", "Captured Uri " + mCapturedImageURI);
+        Log.e("onRestoreInstanceState", "onRestoreInstanceState");
+        Log.e("onRestoreInstanceState", "Captured Uri " + mCapturedImageURI);
         System.out.println("------------------------------------\n");
 
         System.out.println("Restored URI " + savedInstanceState.getString("URI"));

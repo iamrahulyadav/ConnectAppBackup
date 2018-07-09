@@ -19,6 +19,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.connectapp.user.R;
+import com.connectapp.user.constant.StaticConstants;
 import com.connectapp.user.data.ServerStatus;
 import com.connectapp.user.util.Util;
 
@@ -136,7 +137,7 @@ public class PostWithJsonWebTask {
              */
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(StaticConstants.TIMEOUT_DURATION, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(jsObjRequest);
     }
@@ -245,7 +246,7 @@ public class PostWithJsonWebTask {
              */
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(StaticConstants.TIMEOUT_DURATION, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(jsObjRequest);
     }

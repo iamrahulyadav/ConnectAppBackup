@@ -68,15 +68,15 @@ public class FetchCordinates extends AsyncTask<String, Integer, String> {
         countDownTimer = new CountDownTimer(102000, 1000) {
             public void onTick(long millisUntilFinished) {
                 // You can monitor the progress here as well by changing the onTick() time
-                Log.d("TICK", "------->>> tick  <<-----------");
-                Log.d("LOCATION", "Latitude: " + mLocation.getLatitude());
-                 Log.d("AS", "Is cancelled: in tick " + isCancelled());
-                Log.d("AS", "Is fetch cancelled: in tick " + isFetchCancelled);
+                Log.e("TICK", "------->>> tick  <<-----------");
+                Log.e("LOCATION", "Latitude: " + mLocation.getLatitude());
+                 Log.e("AS", "Is cancelled: in tick " + isCancelled());
+                Log.e("AS", "Is fetch cancelled: in tick " + isFetchCancelled);
 
             }
 
             public void onFinish() {
-                Log.d("FINISH", "------->>> finish  <<-----------");
+                Log.e("FINISH", "------->>> finish  <<-----------");
                 // stop async task if not in progress
                 if (asyncObject.getStatus() == AsyncTask.Status.RUNNING) {
                     System.out.println("Async task still running.");
@@ -98,7 +98,7 @@ public class FetchCordinates extends AsyncTask<String, Integer, String> {
         // progDailog.dismiss();
         mLocationManager.removeUpdates(gpsLocationListener);
         isFetchCancelled= isCancelled();
-         Log.d("AS", "Is cancelled: " + isCancelled());
+         Log.e("AS", "Is cancelled: " + isCancelled());
     }
 
     @Override
@@ -120,7 +120,7 @@ public class FetchCordinates extends AsyncTask<String, Integer, String> {
     protected String doInBackground(String... params) {
 
         do {
-          //  Log.d("AS", "Is cancelled: " + isCancelled());
+          //  Log.e("AS", "Is cancelled: " + isCancelled());
             if (isFetchCancelled) {
                 Log.e("WhileLoop", "Is cancelled exit while loop.");
                 break;
@@ -146,7 +146,7 @@ public class FetchCordinates extends AsyncTask<String, Integer, String> {
 
                 lati = location.getLatitude();
                 longi = location.getLongitude();
-                Log.d("TAG", "Latitude: " + lati);
+                Log.e("TAG", "Latitude: " + lati);
                 mLocation = location;
 
             } catch (Exception e) {
@@ -158,17 +158,17 @@ public class FetchCordinates extends AsyncTask<String, Integer, String> {
 
         @Override
         public void onProviderDisabled(String provider) {
-            Log.i("OnProviderDisabled", "OnProviderDisabled");
+            Log.e("OnProviderDisabled", "OnProviderDisabled");
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Log.i("onProviderEnabled", "onProviderEnabled");
+            Log.e("onProviderEnabled", "onProviderEnabled");
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.i("onStatusChanged", "onStatusChanged");
+            Log.e("onStatusChanged", "onStatusChanged");
 
         }
 

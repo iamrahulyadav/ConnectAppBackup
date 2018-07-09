@@ -29,6 +29,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.connectapp.user.R;
 import com.connectapp.user.constant.Consts;
+import com.connectapp.user.constant.StaticConstants;
 
 @SuppressLint("ShowToast")
 public class VolleyTaskManager extends ServiceConnector {
@@ -65,12 +66,12 @@ public class VolleyTaskManager extends ServiceConnector {
      */
     private void makeJsonObjReq(int method, String url, final Map<String, String> paramsMap) {
 
-        Log.d("TAG", "" + isToShowDialog);
+        Log.e("TAG", "" + isToShowDialog);
         if (isToShowDialog) {
             showProgressDialog();
         }
 
-        Log.v("JSONObject", new JSONObject(paramsMap).toString());
+        Log.e("JSONObject", new JSONObject(paramsMap).toString());
         //generateNoteOnSD(mContext, "Request.txt", "" + new JSONObject(paramsMap).toString());
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(method, url, new JSONObject(paramsMap),
@@ -91,22 +92,22 @@ public class VolleyTaskManager extends ServiceConnector {
             @Override
             public void onErrorResponse(VolleyError error) {
                 hideProgressDialog();
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                VolleyLog.e(TAG, "Error: " + error.getMessage());
 
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Log.d("error ocurred", "TimeoutError");
+                    Log.e("error ocurred", "TimeoutError");
                     Toast.makeText(mContext, mContext.getString(R.string.response_timeout), Toast.LENGTH_LONG).show();
                 } else if (error instanceof AuthFailureError) {
-                    Log.d("error ocurred", "AuthFailureError");
+                    Log.e("error ocurred", "AuthFailureError");
                     Toast.makeText(mContext, mContext.getString(R.string.auth_failure), Toast.LENGTH_LONG).show();
                 } else if (error instanceof ServerError) {
-                    Log.d("error ocurred", "ServerError");
+                    Log.e("error ocurred", "ServerError");
                     Toast.makeText(mContext, mContext.getString(R.string.server_error), Toast.LENGTH_LONG).show();
                 } else if (error instanceof NetworkError) {
-                    Log.d("error ocurred", "NetworkError");
+                    Log.e("error ocurred", "NetworkError");
                     Toast.makeText(mContext, mContext.getString(R.string.network_error), Toast.LENGTH_LONG).show();
                 } else if (error instanceof ParseError) {
-                    Log.d("error ocurred", "ParseError");
+                    Log.e("error ocurred", "ParseError");
                     error.printStackTrace();
                     Toast.makeText(mContext, mContext.getString(R.string.parse_error), Toast.LENGTH_LONG).show();
                 }
@@ -133,7 +134,7 @@ public class VolleyTaskManager extends ServiceConnector {
 
         };
 
-        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(60000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StaticConstants.TIMEOUT_DURATION, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 
@@ -273,7 +274,7 @@ public class VolleyTaskManager extends ServiceConnector {
 
         Log.e("url", url);
         System.out.println(paramsMap);
-        Log.d("TAG", "Request JSON \n" + new JSONObject(paramsMap).toString());
+        Log.e("TAG", "Request JSON \n" + new JSONObject(paramsMap).toString());
         makeJsonObjReq(method, url, paramsMap);
     }
 
@@ -287,7 +288,7 @@ public class VolleyTaskManager extends ServiceConnector {
 
         Log.e("url", url);
         System.out.println(paramsMap);
-        Log.d("TAG", "Request JSON \n" + new JSONObject(paramsMap).toString());
+        Log.e("TAG", "Request JSON \n" + new JSONObject(paramsMap).toString());
         makeJsonObjReq(method, url, paramsMap);
 
     }

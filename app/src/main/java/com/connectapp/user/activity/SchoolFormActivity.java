@@ -30,6 +30,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -135,6 +136,9 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
+        } else if (item.getItemId() == R.id.menu_help) {
+            startActivity(new Intent(mContext, GPSTutorialActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -167,6 +171,12 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
 
         public void onCancel() {
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_help, menu);
+        return true;
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,7 +265,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         et_anchal.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG, "andchal on text changed count " + s.length());
+                Log.e(TAG, "andchal on text changed count " + s.length());
                 if (s.length() == 2)
                     et_sankul.requestFocus();
             }
@@ -367,14 +377,14 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
     }
 
     protected void populatingSelectedPic() {
-        Log.v(this.TAG, "selected from gallery");
+        Log.e(this.TAG, "selected from gallery");
         Intent albumIntent = new Intent("android.intent.action.PICK", Media.EXTERNAL_CONTENT_URI);
         albumIntent.setType("image/*");
         startActivityForResult(albumIntent, PICTURE_GALLERY_REQUEST);
     }
 
     protected void cameraSelectedPic() {
-        Log.i(TAG, "selected from camera");
+        Log.e(TAG, "selected from camera");
 
         //camera stuff
         Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -414,30 +424,30 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
                 Matrix matrix = new Matrix();
                 switch (orientation) {
                     case CompletionEvent.STATUS_FAILURE /*1*/:
-                        Log.v("Case:", "1");
+                        Log.e("Case:", "1");
                         break;
                     case CompletionEvent.STATUS_CONFLICT /*2*/:
-                        Log.v("Case:", "2");
+                        Log.e("Case:", "2");
                         break;
                     case CompletionEvent.STATUS_CANCELED /*3*/:
-                        Log.v("Case:", "3");
+                        Log.e("Case:", "3");
                         matrix.postRotate(BitmapDescriptorFactory.HUE_CYAN);
                         break;
                     case GeofencingRequest.INITIAL_TRIGGER_DWELL /*4*/:
-                        Log.v("Case:", "4");
+                        Log.e("Case:", "4");
                         break;
                     case DetectedActivity.TILTING /*5*/:
-                        Log.v("Case:", "5");
+                        Log.e("Case:", "5");
                         break;
                     case Quest.STATE_FAILED /*6*/:
-                        Log.v("Case:", "6");
+                        Log.e("Case:", "6");
                         matrix.postRotate(90.0f);
                         break;
                     case DetectedActivity.WALKING /*7*/:
-                        Log.v("Case:", "7");
+                        Log.e("Case:", "7");
                         break;
                     case DetectedActivity.RUNNING /*8*/:
-                        Log.v("Case:", "8");
+                        Log.e("Case:", "8");
                         matrix.postRotate(-90.0f);
                         break;
                 }
@@ -497,7 +507,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         if (isGooglePlayServicesAvailable()) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (locationManager.isProviderEnabled("gps") || locationManager.isProviderEnabled("network")) {
-                Log.v("GPS Connection Found:", "true");
+                Log.e("GPS Connection Found:", "true");
                 if (mCurrentLocation == null) {
                     mProgressDialog.setMessage("Fetching present location...");
                     mProgressDialog.setCancelable(true);
@@ -572,7 +582,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             finish();
             mCurrentLocation = null;
         } else {
-            Util.showCallBackMessageWithOkCancelGPS(mContext,
+          /*  Util.showCallBackMessageWithOkCancelGPS(mContext,
                     "Location not found! Please do not stay indoor. Tap OK to try again or CANCEL to exit.",
                     new AlertDialogCallBack() {
 
@@ -590,7 +600,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
                             finish();
 
                         }
-                    });
+                    });*/
         }
     }
 
@@ -622,7 +632,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         Log.d(TAG, "Accuray: " + location.getAccuracy());
         hideDialog();
         mCurrentLocation = location;
-        Log.v("onLocationChanged", "Geo Address: " + geoAddress);
+        Log.e("onLocationChanged", "Geo Address: " + geoAddress);
     }
 
     protected void onResume() {
@@ -634,6 +644,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
     }
 
     public void onSubmitClick(View v) {
+
         String countryCode = "";
         String villageName = "";
         String stateCode = tv_stateCode.getText().toString().trim();
@@ -674,8 +685,13 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             formDataMap.put(DBConstants.MU_ID, Util.fetchUserClass(this.mContext).getUserId());
             formDataMap.put(com.connectapp.user.db.DBConstants.THREAD_ID, this.thread.getThreadID());
             formDataMap.put(DBConstants.IMAGE, ((ImageClass) this.imagesList.get(0)).getBase64value());
-            formDataMap.put("lat", "" + mCurrentLocation.getLatitude());
-            formDataMap.put("long", "" + mCurrentLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                formDataMap.put("lat", "" + mCurrentLocation.getLatitude());
+                formDataMap.put("long", "" + mCurrentLocation.getLongitude());
+            } else {
+                formDataMap.put("lat", "");
+                formDataMap.put("long", "");
+            }
             formDataMap.put("piccat", dropDownActivity_pictureCategory.getText().toString().trim());
             formDataMap.put(DBConstants.DATE, Util.getDate());
             formDataMap.put(DBConstants.TIME, Util.getTime());
@@ -689,8 +705,13 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             historyCV.put(DBConstants.MU_ID, Util.fetchUserClass(mContext).getUserId());
             historyCV.put(DBConstants.THREAD_ID, thread.getThreadID());
             historyCV.put(DBConstants.IMAGE, ((ImageClass) imagesList.get(0)).getBase64value());
-            historyCV.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
-            historyCV.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                historyCV.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
+                historyCV.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            } else {
+                historyCV.put(DBConstants.LATITUDE, "");
+                historyCV.put(DBConstants.LONGITUDE, "");
+            }
             historyCV.put(DBConstants.PICTURE_CATEGORY, dropDownActivity_pictureCategory.getText().toString().trim());
             historyCV.put(DBConstants.KEYWORDS, "12,13,14");
             historyCV.put(DBConstants.ADDRESS, this.geoAddress);
@@ -700,6 +721,10 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             historyCV.put(DBConstants.RATH_NUMBER, StaticConstants.RATH_NUMBER_DEFAULT);
             historyCV.put(DBConstants.VILLAGE_NAME, villageName);
             historyCV.put(DBConstants.OTHER_DATA, "{\"sCode\":\"" + countryCode + "\",\"village\":\"" + villageName + "\"}");
+
+            // POST FORM DATA
+
+            Log.e("respo", "" + formDataMap);
             volleyTaskManager.doPostFormData(formDataMap, true);
         } else {
             completeSchoolCode = new StringBuilder(String.valueOf(countryCode)).append(stateCode).append(anchal).append(sankul)
@@ -711,8 +736,13 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             cv.put(DBConstants.MU_ID, Util.fetchUserClass(mContext).getUserId());
             cv.put(DBConstants.THREAD_ID, thread.getThreadID());
             cv.put(DBConstants.IMAGE, ((ImageClass) imagesList.get(0)).getBase64value());
-            cv.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
-            cv.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                cv.put(DBConstants.LATITUDE, mCurrentLocation.getLatitude());
+                cv.put(DBConstants.LONGITUDE, mCurrentLocation.getLongitude());
+            } else {
+                cv.put(DBConstants.LATITUDE, "");
+                cv.put(DBConstants.LONGITUDE, "");
+            }
             cv.put(DBConstants.PICTURE_CATEGORY, dropDownActivity_pictureCategory.getText().toString().trim());
             cv.put(DBConstants.KEYWORDS, "12,13,14");
             cv.put(DBConstants.ADDRESS, geoAddress);
@@ -728,7 +758,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
     }
 
     public void onSuccess(JSONObject resultJsonObject) {
-        Log.v(TAG, "" + resultJsonObject);
+        Log.e(TAG, "" + resultJsonObject);
         if (resultJsonObject.toString() == null || resultJsonObject.toString().trim().isEmpty()) {
             Toast.makeText(mContext, " Request failed. Please try again.", Toast.LENGTH_SHORT).show();
             return;
@@ -738,7 +768,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             String message = "";
             result = resultJsonObject.optString("code");
             message = resultJsonObject.optString("msg");
-            Log.v(this.TAG, result);
+            Log.e(this.TAG, result);
             if (result.equalsIgnoreCase("200")) {
                 new HistoryDB().saveHistoryData(this.mContext, this.historyCV);
                 Util.showCallBackMessageWithOkCallback(mContext, "Submision Complete", new SubmissionComplete());
@@ -829,10 +859,10 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
 				cursor.close();*/
 
                 String picturePath = mCapturedImageURI.getPath();
-                Log.v(TAG, "Picture path: " + picturePath);
+                Log.e(TAG, "Picture path: " + picturePath);
                 processImagePath(picturePath);
             } else if (!(requestCode == 11 || requestCode == 12)) {
-                Log.w("DialogChoosePicture", "Warning: activity result not ok");
+                Log.e("DialogChoosePicture", "Warning: activity result not ok");
                 Toast.makeText(this.mContext, "No image selected", Toast.LENGTH_LONG).show();
             }
         }
@@ -840,8 +870,8 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("onSaveInstanceState", "onSaveInstanceState");
-        Log.d("onSaveInstanceState", "Captured Uri" + mCapturedImageURI);
+        Log.e("onSaveInstanceState", "onSaveInstanceState");
+        Log.e("onSaveInstanceState", "Captured Uri" + mCapturedImageURI);
         System.out.println("------------------------------------\n");
         outState.putString("URI", "" + mCapturedImageURI);
         super.onSaveInstanceState(outState);
@@ -852,8 +882,8 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
 
         super.onRestoreInstanceState(savedInstanceState);
         System.out.println("------------------------------------\n");
-        Log.d("onRestoreInstanceState", "onRestoreInstanceState");
-        Log.d("onRestoreInstanceState", "Captured Uri " + mCapturedImageURI);
+        Log.e("onRestoreInstanceState", "onRestoreInstanceState");
+        Log.e("onRestoreInstanceState", "Captured Uri " + mCapturedImageURI);
         System.out.println("------------------------------------\n");
 
         System.out.println("Restored URI " + savedInstanceState.getString("URI"));

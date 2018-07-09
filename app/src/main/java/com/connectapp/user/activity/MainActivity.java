@@ -193,7 +193,10 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             }
         });
 
-        initializeFirebaseComponents();
+        // Check if the Login is not offline
+       //if (!userClass.isOfflineLogin)
+            // Online Login so initialize firebase
+            initializeFirebaseComponents();
 
     }
 
@@ -204,7 +207,9 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the actio
+        //
+        // n bar if it is present.
         getMenuInflater().inflate(R.menu.menu_dashboard, menu);
         return true;
     }
@@ -301,8 +306,8 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             case 5:
                 gotoRathViewMenu();
                 break;
-		/*case 6:
-			// Resources and gallery
+        /*case 6:
+            // Resources and gallery
 			onResourcesClick();
 			break;*/
             case 6:
@@ -338,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
     /**
      * Un-synced Data option
      */
-	/*
+    /*
 	private void onDataSettingClick() {
 
 	customDialog = new Dialog(mContext);
@@ -773,7 +778,7 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
     private void signOutFromFirebase() {
         mFirebaseAuth.signOut();
         // Google sign out
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
@@ -844,7 +849,9 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
                 });
     }
 
-    /** Add user to firebase User list [Table Name ==>> users] **/
+    /**
+     * Add user to firebase User list [Table Name ==>> users]
+     **/
     private void addUserToDatabase(FirebaseUser firebaseUser) {
         User user = new User(
                 firebaseUser.getDisplayName(),

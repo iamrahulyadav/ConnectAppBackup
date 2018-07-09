@@ -34,10 +34,10 @@ import java.util.HashMap;
 public class ProfileActivity extends AppCompatActivity implements ServerResponseCallback {
 
     private Context mContext;
-    private TextView tv_name, tv_phone, tv_email;
+    private TextView tv_name;
     private EditText et_phone, et_email;
     private VolleyTaskManager volleyTaskManager;
-    private boolean isFetchProfileService = false, isUpdateEmail = false, isUpdatePhone = false;
+    private boolean isFetchProfileService = false, isUpdateEmail = false, isUpdatePhone = false, isupdateProfile = false;
     private String phoneNumber = "", emailID = "";
     private String newEmail = "", newPhoneNumber = "";
     private Dialog editPhoneDialog;
@@ -63,8 +63,8 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
         getSupportActionBar().setTitle("  Edit Profile");
 
         tv_name = findViewById(R.id.tv_name);
-        tv_phone = findViewById(R.id.tv_phone);
-        tv_email = findViewById(R.id.tv_email);
+        // tv_phone = findViewById(R.id.tv_phone);
+        // tv_email = findViewById(R.id.tv_email);
 
         et_phone = (EditText) findViewById(R.id.et_phone);
         et_email = (EditText) findViewById(R.id.et_email);
@@ -209,8 +209,8 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
                 String name = data.optString("userName");
                 String phone = data.optString("Phone");
                 String email = data.optString("email");
-                emailID = email;
-                phoneNumber = phone;
+                // emailID = email;
+                // phoneNumber = phone;
                 updateView(name, phone, email);
 
 
@@ -222,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
                 Util.showMessageWithOk(ProfileActivity.this, "Something went wrong! Please try again.");
             }
 
-        } else if (isUpdateEmail) {
+        } /*else if (isUpdateEmail) {
             isUpdateEmail = false;
             if (resultJsonObject.optString("code").equalsIgnoreCase("200")) {
                 //Assign value to EmailID
@@ -258,15 +258,27 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
             } else {
                 Util.showMessageWithOk(ProfileActivity.this, "Something went wrong! Please try again.");
             }
+        }*/ else if (isupdateProfile) {
+            isupdateProfile = false;
+            if (resultJsonObject.optString("code").equalsIgnoreCase("200")) {
+                // Display success message
+                //Util.showMessageWithOk(ProfileActivity.this, "Profile updated successfully.");
+                Toast.makeText(mContext, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
+
+            } else if (resultJsonObject.optString("code").trim().equalsIgnoreCase("400")) {
+                Util.showMessageWithOk(ProfileActivity.this, "Something went wrong! Please try again.");
+            } else {
+                Util.showMessageWithOk(ProfileActivity.this, "Something went wrong! Please try again.");
+            }
         }
     }
 
     private void updateView(String name, String phone, String email) {
 
         tv_name.setText("" + name);
-        tv_phone.setText("+91 " + phone);
+        //tv_phone.setText("+91 " + phone);
         et_phone.setText("+91 " + phone);
-        tv_email.setText("" + email);
+        //tv_email.setText("" + email);
         et_email.setText("" + email);
     }
 
@@ -275,5 +287,27 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
 
     }
 
+    public void onSubmitClick(View view) {
+
+        String email = et_email.getText().toString().trim();
+        String phone = et_phone.getText().toString().trim();
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)) {
+            Toast.makeText(mContext, "Please enter a phone number", Toast.LENGTH_LONG).show();
+            return;
+        } else if (!Util.isValidEmail(email)) {
+            Toast.makeText(mContext, "Please enter a valid email address.", Toast.LENGTH_LONG).show();
+            return;
+        } else if (phone.length() < 10) {
+            Toast.makeText(mContext, "Please enter a valid phone number.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        HashMap<String, String> requestMap = new HashMap<>();
+        requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
+        requestMap.put("email", "" + et_email.getText().toString().trim());
+        requestMap.put("userPhone", "" + et_phone.getText().toString().trim());
+        isupdateProfile = true;
+        volleyTaskManager.doUpdateUserProfile(requestMap, true);
+
+    }
 
 }
