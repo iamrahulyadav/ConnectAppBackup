@@ -55,6 +55,7 @@ public class Util {
     private static String OFFLINEDATA = "OFFLINEDATA";
     private static String CHATCLASS = "CHATCLASS";
     private static String USERCHATCLASS = "USERCHATCLASS";
+    private static String SELECTEDUSERCLASS = "SELECTEDUSERCLASS";
 
     private static int CONNECTIONTIMEOUT = 8000;
     private static StringBuilder sb = null;
@@ -64,6 +65,7 @@ public class Util {
     private static final String PREF_NAME_DATA = "DataFTSPrefs";
     private static final String CHAT_PREFS = "ChatPrefs";
     private static final String PREF_NAME_USER_CHAT = "UserChatPrefs";
+    private static final String PREF_NAME_SELECTED_USER = "SelectedUserPrefs";
 
 
     /**
@@ -567,6 +569,40 @@ public class Util {
         }
 
         return prefUtilsClass;
+    }
+
+    /**
+     * Saving Selected UserClass details
+     **/
+    public static void saveSelectedUserClass(final Context mContext, UserClass userClass) {
+        SharedPreferences LastMilePrefs = mContext.getSharedPreferences(PREF_NAME_SELECTED_USER, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = LastMilePrefs.edit();
+        try {
+            prefsEditor.putString(SELECTEDUSERCLASS, ObjectSerializer.serialize(userClass));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        prefsEditor.commit();
+    }
+
+    /**
+     * Fetching Selected UserClass details
+     **/
+    public static UserClass fetchSelectedUserClass(final Context mContext) {
+        SharedPreferences LastMilePrefs = mContext.getSharedPreferences(PREF_NAME_SELECTED_USER, Context.MODE_PRIVATE);
+        UserClass userClass = null;
+        String serializeOrg = LastMilePrefs.getString(SELECTEDUSERCLASS, null);
+        try {
+            if (serializeOrg != null) {
+                userClass = (UserClass) ObjectSerializer.deserialize(serializeOrg);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return userClass;
     }
 
     /**

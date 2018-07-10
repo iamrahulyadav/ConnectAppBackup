@@ -46,7 +46,6 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
 
     private VolleyTaskManager volleyTaskManager;
 
-    private FriendsListAdapter adapter;
     private LinearLayout ll_searchLayout;
 
     @Override
@@ -163,6 +162,7 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
                     chatContact.userID = studentJsonObj.optString("mu_id");
                     chatContact.studentFirebaseId = studentJsonObj.optString("mu_firebaseID");
                     chatContact.profileImgURL = studentJsonObj.optString("mu_img_url");
+                    chatContact.firebaseInstanceID = studentJsonObj.optString("mu_firebase_instance");
                     chatContacts.add(chatContact);
                     contactArrayMap.put("" + chatContact.emailId, chatContact);
                 }
@@ -241,7 +241,8 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
                 });
 
                 // Set Students List View and Adapter
-                adapter = new FriendsListAdapter(mContext, studentList.studentsArrayList);
+                Log.e("studentsArrayList", "studentsArrayList Size: " + studentList.studentsArrayList.size());
+                FriendsListAdapter adapter = new FriendsListAdapter(mContext, studentList.studentsArrayList);
                 LinearLayoutManager llm = new LinearLayoutManager(mContext);
                 llm.setOrientation(LinearLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(llm);
@@ -253,12 +254,12 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
                     public void onItemClick(View view, ChatContact obj, int position) {
                         //Toast.makeText(mContext, "Position: " + position, Toast.LENGTH_SHORT).show();
 
-                        /*UserClass userClass = Util.fetchUserClass(mContext);
+                        UserClass userClass = Util.fetchSelectedUserClass(mContext);
                         if (userClass == null)
                             userClass = new UserClass();
 
                         userClass.selectedStudent = obj;
-                        Util.saveUserClass(mContext, userClass);*/
+                        Util.saveSelectedUserClass(mContext, userClass);
                         ChatContactList studentList1 = Util.fetchStudentList(mContext);
                         if (studentList1.studentsArrayList.get(position).unreadMsgCount > 0) {
                             studentList1.studentsArrayList.get(position).unreadMsgCount = 0;
@@ -270,6 +271,7 @@ public class ChatContactsActivity extends AppCompatActivity implements ServerRes
                         intent.putExtra("email", obj.emailId);
                         intent.putExtra("studentId", obj.userID);
                         intent.putExtra("firebaseId", obj.studentFirebaseId);
+                        intent.putExtra("firebaseInstanceID", obj.firebaseInstanceID);
                         startActivity(intent);
                     }
                 });

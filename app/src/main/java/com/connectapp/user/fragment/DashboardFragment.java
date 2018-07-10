@@ -506,7 +506,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
             requestMap.put("emailID", "" + mFirebaseAuth.getCurrentUser().getEmail());
             requestMap.put("imageUrl", "" + mFirebaseAuth.getCurrentUser().getPhotoUrl());
             requestMap.put("firebaseID", "" + mFirebaseAuth.getCurrentUser().getUid());
-            requestMap.put("firebaseInstanceID", "" + mFirebaseAuth.getCurrentUser().getUid());
+            requestMap.put("firebaseInstanceID", "" + FirebaseInstanceId.getInstance().getToken());
             // requestMap.put("deviceToken", "" + instanceId);
             Log.e("firebaseId", "U Id: " + mFirebaseAuth.getCurrentUser().getUid());
             Log.e("Request", "" + new JSONObject(requestMap));

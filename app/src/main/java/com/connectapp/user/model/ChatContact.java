@@ -12,6 +12,7 @@ public class ChatContact implements Serializable {
     public String mobile;
     public String studentFirebaseId;
     public String userID;
-    public int unreadMsgCount=0;
+    public int unreadMsgCount = 0;
     public String profileImgURL;
+    public String firebaseInstanceID;
 }

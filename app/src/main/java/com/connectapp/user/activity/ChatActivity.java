@@ -121,6 +121,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     // Intent Data
     private String receiverEmail = "";
     private String receiverFirebaseID = "";
+    private String receiverInstanceID = "";
 
     static final String TAG = ChatActivity.class.getSimpleName();
 
@@ -143,6 +144,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Log.e("receiverEmail", "receiverEmail " + receiverEmail);
         receiverFirebaseID = getIntent().getStringExtra("firebaseId");
         Log.e("receiverFirebaseID", "receiverFirebaseID " + receiverFirebaseID);
+
+        receiverInstanceID = getIntent().getStringExtra("firebaseInstanceID");
+        Log.e("receiverInstanceID", "receiverInstanceID " + receiverInstanceID);
+       // receiverInstanceID = "choP2nBMmM8:APA91bHYGvOkZaf2QVHDkshjb7Xg2-Hn-HO1x1oPH2dxCmnRBKByBVaU4Nki1IFZRNtcUs-cVB0wpXXDMq8WbyPg3dyPzFla8bLldbn5PfdpqtDWa3iyJevJKG5SNQZmuTMsqtNmJNkQxAu13IvTMrlQ7mN2iyX1ow";
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("" + contactName);
@@ -269,7 +274,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String keyMap = sortKeyMap(result);
         Log.e("KeyMap", "KeyMap: " + keyMap);
         UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
-        ChatModel model = new ChatModel(userModel, edMessage.getText().toString(), receiverFirebaseID, userChatClass.firebaseId, userChatClass.firebaseInstanceId, userChatClass.getEmail(), receiverEmail, keyMap, Calendar.getInstance().getTime().getTime() + "", null);
+        ChatModel model = new ChatModel(userModel, edMessage.getText().toString(), receiverFirebaseID, userChatClass.firebaseId, receiverInstanceID, userChatClass.getEmail(), receiverEmail, keyMap, Calendar.getInstance().getTime().getTime() + "", null);
         mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(model);
         edMessage.setText(null);
     }
@@ -605,7 +610,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             Calendar.getInstance().getTime().getTime() + "", fileModel);*/
 
                     ChatModel chatModel = new ChatModel(userModel, "", receiverFirebaseID,
-                            userChatClass.firebaseId, userChatClass.firebaseInstanceId,
+                            userChatClass.firebaseId, receiverInstanceID,
                             userChatClass.getEmail(), receiverEmail, keyMap,
                             Calendar.getInstance().getTime().getTime() + "", fileModel);
 
@@ -680,7 +685,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);*/
                         ChatModel chatModel = new ChatModel(userModel, "", receiverFirebaseID,
-                                userChatClass.firebaseId, userChatClass.firebaseInstanceId,
+                                userChatClass.firebaseId, receiverInstanceID,
                                 userChatClass.getEmail(), receiverEmail, keyMap,
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);
                         mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
@@ -730,7 +735,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);*/
                         ChatModel chatModel = new ChatModel(userModel, "", receiverFirebaseID,
-                                userChatClass.firebaseId, userChatClass.firebaseInstanceId,
+                                userChatClass.firebaseId, receiverInstanceID,
                                 userChatClass.getEmail(), receiverEmail, keyMap,
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);
                         mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);

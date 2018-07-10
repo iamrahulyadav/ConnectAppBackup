@@ -246,7 +246,7 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
                 // Assign value to phoneNumber
                 phoneNumber = newPhoneNumber;
                 // Update View
-                tv_phone.setText("+91 " + phoneNumber);
+                tv_phone.setText(phoneNumber);
                 // Display success message
                 Toast.makeText(mContext, "Phone number updated successfully.", Toast.LENGTH_SHORT).show();
                 // Close dialog window
@@ -276,8 +276,8 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
     private void updateView(String name, String phone, String email) {
 
         tv_name.setText("" + name);
-        //tv_phone.setText("+91 " + phone);
-        et_phone.setText("+91 " + phone);
+        //tv_phone.setText( phone);
+        et_phone.setText( phone);
         //tv_email.setText("" + email);
         et_email.setText("" + email);
     }
