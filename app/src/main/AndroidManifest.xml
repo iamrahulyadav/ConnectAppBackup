@@ -256,6 +256,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".view.FullScreenImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeFullScreenImage"></activity>
 
         <service
             android:name=".syncadapter.AuthenticatorService"

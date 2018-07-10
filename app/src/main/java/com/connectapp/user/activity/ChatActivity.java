@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.connectapp.user.BuildConfig;
 import com.connectapp.user.R;
@@ -38,7 +40,9 @@ import com.connectapp.user.data.FileModel;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.data.UserModel;
 import com.connectapp.user.model.UserChatClass;
+import com.connectapp.user.util.FileOpen;
 import com.connectapp.user.util.Util;
+import com.connectapp.user.view.FullScreenImageActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -56,7 +60,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -131,6 +142,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         receiverEmail = getIntent().getStringExtra("email");
         Log.e("receiverEmail", "receiverEmail " + receiverEmail);
         receiverFirebaseID = getIntent().getStringExtra("firebaseId");
+        Log.e("receiverFirebaseID", "receiverFirebaseID " + receiverFirebaseID);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("" + contactName);
@@ -257,7 +269,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String keyMap = sortKeyMap(result);
         Log.e("KeyMap", "KeyMap: " + keyMap);
         UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
-        ChatModel model = new ChatModel(userModel, edMessage.getText().toString(), userChatClass.adminFirebaseId, userChatClass.firebaseId, userChatClass.firebaseInstanceId, userChatClass.getEmail(), receiverEmail, keyMap, Calendar.getInstance().getTime().getTime() + "", null);
+        ChatModel model = new ChatModel(userModel, edMessage.getText().toString(), receiverFirebaseID, userChatClass.firebaseId, userChatClass.firebaseInstanceId, userChatClass.getEmail(), receiverEmail, keyMap, Calendar.getInstance().getTime().getTime() + "", null);
         mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(model);
         edMessage.setText(null);
     }
@@ -266,7 +278,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void clickImageChat(View view, int position, String nameUser, String urlPhotoUser, String urlPhotoClick) {
-
+        Intent intent = new Intent(this, FullScreenImageActivity.class);
+        intent.putExtra("nameUser", nameUser);
+        intent.putExtra("urlPhotoUser", urlPhotoUser);
+        intent.putExtra("urlPhotoClick", urlPhotoClick);
+        startActivity(intent);
     }
 
     @Override
@@ -276,7 +292,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void clickFileChat(View view, int position, String nameUser, String urlPhotoUser, String urlPhotoClick) {
-
+        new DownloadFileFromURL("" + urlPhotoClick).execute("" + urlPhotoClick);
     }
 
     @Override
@@ -469,7 +485,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void otherFileIntent() {
         // Toast.makeText(mContext, "Other Files", Toast.LENGTH_SHORT).show();
-     /*   String[] mimetypes = {"application*//*|text*//*"};
+        /*   String[] mimetypes = {"application*//*|text*//*"};
         Intent i = new Intent();*/
         // i.setType("*/*");
        /* i.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
@@ -588,7 +604,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
                             Calendar.getInstance().getTime().getTime() + "", fileModel);*/
 
-                    ChatModel chatModel = new ChatModel(userModel, "", userChatClass.adminFirebaseId,
+                    ChatModel chatModel = new ChatModel(userModel, "", receiverFirebaseID,
                             userChatClass.firebaseId, userChatClass.firebaseInstanceId,
                             userChatClass.getEmail(), receiverEmail, keyMap,
                             Calendar.getInstance().getTime().getTime() + "", fileModel);
@@ -663,7 +679,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                        /* ChatModel chatModel = new ChatModel(userModel, "", userClass.adminFirebaseId,
                                 userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);*/
-                        ChatModel chatModel = new ChatModel(userModel, "", userChatClass.adminFirebaseId,
+                        ChatModel chatModel = new ChatModel(userModel, "", receiverFirebaseID,
                                 userChatClass.firebaseId, userChatClass.firebaseInstanceId,
                                 userChatClass.getEmail(), receiverEmail, keyMap,
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);
@@ -713,7 +729,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                        /* ChatModel chatModel = new ChatModel(userModel, "", userClass.adminFirebaseId,
                                 userClass.firebaseId, userClass.firebaseInstanceId, userClass.getEmail(),
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);*/
-                        ChatModel chatModel = new ChatModel(userModel, "", userChatClass.adminFirebaseId,
+                        ChatModel chatModel = new ChatModel(userModel, "", receiverFirebaseID,
                                 userChatClass.firebaseId, userChatClass.firebaseInstanceId,
                                 userChatClass.getEmail(), receiverEmail, keyMap,
                                 Calendar.getInstance().getTime().getTime() + "", fileModel);
@@ -759,5 +775,160 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return result;
+    }
+
+    ProgressDialog pDialog;
+
+    /**
+     * Background Async Task to download file
+     */
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        private String downloadFileUrlChat = "";
+
+
+        public DownloadFileFromURL(String url) {
+
+            downloadFileUrlChat = url;
+        }
+
+        /**
+         * Before starting background thread
+         * Show Progress Bar Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(mContext);
+            pDialog.setMessage("Downloading file. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setMax(100);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setCancelable(true);
+            if (!pDialog.isShowing())
+                pDialog.show();
+        }
+
+        /**
+         * Downloading file in background thread
+         */
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                URL url = new URL(f_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.connect();
+                // getting file length
+                int lenghtOfFile = conection.getContentLength();
+
+                // input stream to read file - with 8k buffer
+                InputStream input = new BufferedInputStream(url.openStream(), 8192);
+
+                // Output stream to write file
+                OutputStream output = new FileOutputStream("/sdcard/" + "Documents" + "/" + ChatFirebaseAdapter.getBetweenStrings(downloadFileUrlChat, "_mentorfile_", "_gallery"));
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    // publishing the progress....
+                    // After this onProgressUpdate will be called
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+
+                    // writing data to file
+                    output.write(data, 0, count);
+                }
+
+                // flushing output
+                output.flush();
+
+                // closing streams
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+
+            return null;
+        }
+
+        /**
+         * Updating progress bar
+         */
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+            pDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        /**
+         * After completing background task
+         * Dismiss the progress dialog
+         **/
+        @Override
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog after the file was downloaded
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+
+            // Displaying downloaded image into image view
+            // Reading image path from sdcard
+            String imagePath = Environment.getExternalStorageDirectory().toString() + "/Documents" + "/" + ChatFirebaseAdapter.getBetweenStrings(downloadFileUrlChat, "_mentorfile_", "_gallery");
+            // setting downloaded into image view
+            //my_image.setImageDrawable(Drawable.createFromPath(imagePath));
+            Log.e("Stored Path", "StoredPath: " + imagePath);
+            if (imagePath != null && imagePath.length() > 0) {
+                File file = new File(imagePath);
+                /* Uri path = Uri.fromFile(file);
+                 *//* String mime = getContentResolver().getType(path);
+
+                // Open file with user selected app
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setDataAndType(path, mime);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);*//*
+                MimeTypeMap myMime = MimeTypeMap.getSingleton();
+                Intent newIntent = new Intent(Intent.ACTION_VIEW);
+                String mimeType = myMime.getMimeTypeFromExtension(fileExt(path.toString()).substring(1));
+                newIntent.setDataAndType(Uri.fromFile(file),mimeType);
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    mContext.startActivity(newIntent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(mContext, "No handler for this type of file.", Toast.LENGTH_LONG).show();
+                }*/
+
+                try {
+                    FileOpen.openFile(mContext, file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(mContext, "No handler for this type of file.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+    }
+
+    private String fileExt(String url) {
+        if (url.indexOf("?") > -1) {
+            url = url.substring(0, url.indexOf("?"));
+        }
+        if (url.lastIndexOf(".") == -1) {
+            return null;
+        } else {
+            String ext = url.substring(url.lastIndexOf(".") + 1);
+            if (ext.indexOf("%") > -1) {
+                ext = ext.substring(0, ext.indexOf("%"));
+            }
+            if (ext.indexOf("/") > -1) {
+                ext = ext.substring(0, ext.indexOf("/"));
+            }
+            return ext.toLowerCase();
+
+        }
     }
 }

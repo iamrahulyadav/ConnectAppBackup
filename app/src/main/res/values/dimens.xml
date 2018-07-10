@@ -18,4 +18,8 @@
     <dimen name="ken_burns_header">250dp</dimen>
     <dimen name="cpb_stroke_width">4dp</dimen>
 
+    <dimen name="size_avatar_toolbar">40dp</dimen>
+    <dimen name="spacing_double">16dp</dimen>
+    <dimen name="elevation_header">4dp</dimen>
+
 </resources>
