@@ -6,11 +6,20 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.connectapp.user.activity.ChatContactsActivity;
+import com.connectapp.user.model.ChatContact;
+import com.connectapp.user.model.ChatContactList;
+import com.connectapp.user.util.BusHolder;
+import com.connectapp.user.util.DataSetUpdatedEvent;
+import com.connectapp.user.util.Util;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -22,7 +31,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.e(TAG, "From: " + remoteMessage.getFrom());
-
+        Log.e(TAG, "Data: " + remoteMessage.getData().toString());
+        Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         if (remoteMessage == null)
             return;
 
@@ -35,80 +45,119 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
+            Map<String, String> data = remoteMessage.getData();
+            handleDataMessage(data);
 
-            try {
-                JSONObject json = new JSONObject(remoteMessage.getData().toString());
-                handleDataMessage(json);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception: " + e.getMessage());
-            }
         }
     }
 
     private void handleNotification(String message) {
-
-        // play notification sound
-        NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
-        notificationUtils.playNotificationSound();
         if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
             // app is in foreground, broadcast the push message
             Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
             pushNotification.putExtra("message", message);
             LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
-
+            // play notification sound
+            NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
+            notificationUtils.playNotificationSound();
         } else {
             // If the app is in background, firebase itself handles the notification
-
-
         }
     }
 
-    private void handleDataMessage(JSONObject json) {
+    private void handleDataMessage(Map<String, String> json) {
         Log.e(TAG, "push json: " + json.toString());
 
         try {
-            JSONObject data = json.getJSONObject("data");
+            //JSONObject data = json.getJSONObject("data");
 
-            String title = data.getString("title");
-            String message = data.getString("message");
-            boolean isBackground = data.getBoolean("is_background");
-            String imageUrl = data.getString("image");
-            String timestamp = data.getString("timestamp");
-            JSONObject payload = data.getJSONObject("payload");
+            String title = json.get("title");
+            String message = json.get("message");
+            String imageUrl = json.get("icon");
+            String timestamp = "5767";//json.getString("timestamp");
+            //JSONObject payload = json.getJSONObject("payload");
+            String email = json.get("email");
 
             Log.e(TAG, "title: " + title);
             Log.e(TAG, "message: " + message);
-            Log.e(TAG, "isBackground: " + isBackground);
-            Log.e(TAG, "payload: " + payload.toString());
+            //Log.e(TAG, "payload: " + payload.toString());
             Log.e(TAG, "imageUrl: " + imageUrl);
             Log.e(TAG, "timestamp: " + timestamp);
+
+            if (!email.isEmpty()) {
+                updateStudentList(email);
+            }
 
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
+                Log.e("In Background","Not In Background");
                 Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
                 pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
-
+                // play notification sound
+                NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
+                notificationUtils.playNotificationSound();
             } else {
+                Log.e("Not in background","In background: "+message);
                 // app is in background, show the notification in notification tray
-                Intent resultIntent = new Intent(getApplicationContext(), FireBaseActivity.class);
+                Intent resultIntent = new Intent(getApplicationContext(), ChatContactsActivity.class);
                 resultIntent.putExtra("message", message);
 
                 // check for image attachment
                 if (TextUtils.isEmpty(imageUrl)) {
+                    Log.e("ImageURL","Empty");
                     showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
                 } else {
                     // image is present, show notification with image
+                    Log.e("ImageURL","Not Empty");
                     showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
                 }
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Json Exception: " + e.getMessage());
         } catch (Exception e) {
             Log.e(TAG, "Exception: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void updateStudentList(String email) {
+
+        // Enter student at first
+
+        ChatContactList studentList = Util.fetchStudentList(getApplicationContext());
+
+        if (studentList != null) {
+
+            ArrayList<ChatContact> studentArrayList = studentList.studentsArrayList;
+
+            for (int i = 0; i < studentArrayList.size(); i++) {
+                if (studentArrayList.get(i).emailId.trim().equalsIgnoreCase("" + email)) {
+                    ChatContact student = studentArrayList.get(i);
+                    int unreadCount = student.unreadMsgCount;
+                    Log.e("Unread Message", "Before: " + student.unreadMsgCount);
+                    student.unreadMsgCount = unreadCount + 1;
+                    Log.e("Unread Message", "After Increent: " + student.unreadMsgCount);
+
+                    //Remove the item
+                    studentArrayList.remove(i);
+                    Log.e("Size: ", "Remove Size: " + studentArrayList.size());
+                    //Push the item at Top
+                    studentArrayList.add(0,student);
+                    Log.e("Size: ", "Added Size: " + studentArrayList.size());
+                }
+
+
+            }
+            // Replace the old list with New
+            studentList.studentsArrayList = studentArrayList;
+            Log.e("Size: ", "Added Size: " + studentList.studentsArrayList.size());
+            Util.saveStudentList(getApplicationContext(), studentList);
+            if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+                BusHolder.getInstnace().post(new DataSetUpdatedEvent(""));
+            }
+
         }
     }
 
