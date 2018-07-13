@@ -198,8 +198,10 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
 
         // Check if the Login is not offline
         //if (!userClass.isOfflineLogin)
+
+        // TODO -- Uncomment initializeFirebaseComponents() to enable Firebase initialization
         // Online Login so initialize firebase
-        initializeFirebaseComponents();
+        //initializeFirebaseComponents();
 
     }
 
@@ -222,11 +224,13 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         } else if (item.getItemId() == R.id.menu_chat) {
-            if (Util.isInternetAvailable(mContext)) {
+
+            Util.showMessageWithOk(MainActivity.this, "ConnectApp Chat! Coming Soon.");
+            /*if (Util.isInternetAvailable(mContext)) {
                 verifyUserLogin();
             } else {
                 Util.showMessageWithOk(MainActivity.this, "You do not have an active internet connection.");
-            }
+            }*/
             return true;
         } else if (item.getItemId() == R.id.menu_edit_profile) {
             if (Util.isInternetAvailable(mContext))
@@ -966,7 +970,8 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
     @Override
     protected void onPause() {
         super.onPause();
-        mGoogleApiClient.stopAutoManage((FragmentActivity) mContext);
-        mGoogleApiClient.disconnect();
+        // TODO Uncomment for Firebase Chat
+        /*mGoogleApiClient.stopAutoManage((FragmentActivity) mContext);
+        mGoogleApiClient.disconnect();*/
     }
 }

@@ -3,7 +3,7 @@
 
     <string name="app_name">ConnectApp</string>
     <string name="no_internet">No network connection found! Please check your network connection and try again.</string>
-    <string name="response_timeout">Response time out error! Please check your internet connection and try again.</string>
+    <string name="response_timeout">Error! Please check your internet connection and try again.</string>
     <string name="auth_failure">Server authentication failed! Please try again.</string>
     <string name="server_error">Server isn\'t responding! Please try again.</string>
     <string name="network_error">Network not found! Please check your internet connection and try again.</string>
@@ -165,7 +165,6 @@
         <item>Teacher with Donar Board</item>
         <item>Teacher with student</item>
         <item>Samity</item>
-        <item>OTS</item>
         <item>Others</item>
     </string-array>
 

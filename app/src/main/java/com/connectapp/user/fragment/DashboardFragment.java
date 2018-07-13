@@ -127,7 +127,9 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
             }
         }
         //if (!Util.fetchUserClass(mContext).isOfflineLogin)
-            initializeFirebaseComponents();
+
+        // TODO -- Uncomment initializeFirebaseComponents() to enable Firebase initialization
+        // initializeFirebaseComponents();
 
     }
 
@@ -219,14 +221,14 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     threadEkalPrayash.setThreadID("ekalPrayash");
                     threadEkalPrayash.setThreadName("Ekal Prayash");
                     threadEkalPrayash.setThreadImage(R.drawable.ic_ekal_prayash_bg);
-                    Thread threadChat = new Thread();
+                   /* Thread threadChat = new Thread();
                     threadChat.setThreadID("chat");
                     threadChat.setThreadName("ConnectApp Chat");
-                    threadChat.setThreadImage(R.drawable.ic_chat_bg);
+                    threadChat.setThreadImage(R.drawable.ic_chat_bg);*/
                     threadList.add(threadResources);
                     threadList.add(threadMembersDirectory);
                     threadList.add(threadEkalPrayash);
-                    threadList.add(threadChat);
+                    // threadList.add(threadChat);
                     saveThreads(threadList);
                     updateListUI(threadList);
 
@@ -551,7 +553,8 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
     @Override
     public void onPause() {
         super.onPause();
-        mGoogleApiClient.stopAutoManage((FragmentActivity) getActivity());
-        mGoogleApiClient.disconnect();
+        // TODO Uncomment for Firebase Chat
+       /* mGoogleApiClient.stopAutoManage((FragmentActivity) getActivity());
+        mGoogleApiClient.disconnect();*/
     }
 }

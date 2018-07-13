@@ -173,12 +173,13 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         }
     }
 
-    @Override
+    // TODO -- SHOW HELP ICON
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_help, menu);
         return true;
     }
-
+*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
@@ -582,7 +583,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
             finish();
             mCurrentLocation = null;
         } else {
-          /*  Util.showCallBackMessageWithOkCancelGPS(mContext,
+            Util.showCallBackMessageWithOkCancelGPS(mContext,
                     "Location not found! Please do not stay indoor. Tap OK to try again or CANCEL to exit.",
                     new AlertDialogCallBack() {
 
@@ -600,7 +601,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
                             finish();
 
                         }
-                    });*/
+                    });
         }
     }
 
@@ -677,7 +678,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         } else if (village.length() < 2) {
             Util.showMessageWithOk(SchoolFormActivity.this, "Please enter the correct Village.");
         } else if (dropDownActivity_pictureCategory.getText().toString().trim().isEmpty()) {
-            Util.showMessageWithOk(SchoolFormActivity.this, "Please enter a comment.");
+            Util.showMessageWithOk(SchoolFormActivity.this, "Please select a picture category.");
         } else if (Util.isInternetAvailable(this.mContext)) {
             completeSchoolCode = new StringBuilder(String.valueOf(countryCode)).append(stateCode).append(anchal).append(sankul)
                     .append(sanch).append(upsanch).append(village).toString();

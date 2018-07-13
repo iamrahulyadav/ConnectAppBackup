@@ -187,12 +187,12 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         public void onCancel() {
         }
     }
-
-    @Override
+    // TODO -- SHOW HELP ICON
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_help, menu);
         return true;
-    }
+    }*/
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -516,7 +516,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
             finish();
             mCurrentLocation = null;
         } else {
-           /* Util.showCallBackMessageWithOkCancelGPS(mContext,
+            Util.showCallBackMessageWithOkCancelGPS(mContext,
                     "Location not found! Please do not stay indoor. Tap OK to try again or CANCEL to exit.",
                     new AlertDialogCallBack() {
 
@@ -533,7 +533,7 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
                             finish();
 
                         }
-                    });*/
+                    });
         }
     }
 
@@ -590,10 +590,10 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
         }
         if (imagesList.size() < 1) {
             Util.showMessageWithOk(RathFormActivity.this, "Please take a picture first.");
-        } else if (rathNumber.length() < 0) {
+        } else if (rathNumber.length() < 1) {
             Util.showMessageWithOk(RathFormActivity.this, "Please enter the rath number.");
         } else if (dropDownActivity_pictureCategory.getText().toString().trim().isEmpty()) {
-            Util.showMessageWithOk(RathFormActivity.this, "Please enter a comment.");
+            Util.showMessageWithOk(RathFormActivity.this, "Please select a picture category.");
         } else if (Util.isInternetAvailable(mContext)) {
 
             HashMap<String, String> formDataMap = new HashMap();
