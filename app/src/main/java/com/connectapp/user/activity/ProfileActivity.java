@@ -277,7 +277,7 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
 
         tv_name.setText("" + name);
         //tv_phone.setText( phone);
-        et_phone.setText( phone);
+        et_phone.setText(phone);
         //tv_email.setText("" + email);
         et_email.setText("" + email);
     }
@@ -288,25 +288,27 @@ public class ProfileActivity extends AppCompatActivity implements ServerResponse
     }
 
     public void onSubmitClick(View view) {
-
-        String email = et_email.getText().toString().trim();
-        String phone = et_phone.getText().toString().trim();
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)) {
-            Toast.makeText(mContext, "Please enter a phone number", Toast.LENGTH_LONG).show();
-            return;
-        } else if (!Util.isValidEmail(email)) {
-            Toast.makeText(mContext, "Please enter a valid email address.", Toast.LENGTH_LONG).show();
-            return;
-        } else if (phone.length() < 10) {
-            Toast.makeText(mContext, "Please enter a valid phone number.", Toast.LENGTH_LONG).show();
-            return;
-        }
-        HashMap<String, String> requestMap = new HashMap<>();
-        requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
-        requestMap.put("email", "" + et_email.getText().toString().trim());
-        requestMap.put("userPhone", "" + et_phone.getText().toString().trim());
-        isupdateProfile = true;
-        volleyTaskManager.doUpdateUserProfile(requestMap, true);
+        if (Util.isInternetAvailable(mContext)) {
+            String email = et_email.getText().toString().trim();
+            String phone = et_phone.getText().toString().trim();
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)) {
+                Toast.makeText(mContext, "Please enter a phone number", Toast.LENGTH_LONG).show();
+                return;
+            } else if (!Util.isValidEmail(email)) {
+                Toast.makeText(mContext, "Please enter a valid email address.", Toast.LENGTH_LONG).show();
+                return;
+            } else if (phone.length() < 10) {
+                Toast.makeText(mContext, "Please enter a valid phone number.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            HashMap<String, String> requestMap = new HashMap<>();
+            requestMap.put("userID", "" + Util.fetchUserClass(mContext).getUserId());
+            requestMap.put("email", "" + et_email.getText().toString().trim());
+            requestMap.put("userPhone", "" + et_phone.getText().toString().trim());
+            isupdateProfile = true;
+            volleyTaskManager.doUpdateUserProfile(requestMap, true);
+        } else
+            Util.showMessageWithOk(ProfileActivity.this, "No Internet connection.");
 
     }
 

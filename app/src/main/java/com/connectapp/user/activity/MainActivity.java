@@ -188,15 +188,18 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
         iv_editProfile.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(mContext, ProfileActivity.class));
+                if (Util.isInternetAvailable(mContext))
+                    startActivity(new Intent(mContext, ProfileActivity.class));
+                else
+                    Util.showMessageWithOk(MainActivity.this, "No Internet connection.");
                 mDrawerLayout.closeDrawer(mDrawerList);
             }
         });
 
         // Check if the Login is not offline
-       //if (!userClass.isOfflineLogin)
-            // Online Login so initialize firebase
-            initializeFirebaseComponents();
+        //if (!userClass.isOfflineLogin)
+        // Online Login so initialize firebase
+        initializeFirebaseComponents();
 
     }
 
@@ -226,7 +229,10 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
             }
             return true;
         } else if (item.getItemId() == R.id.menu_edit_profile) {
-            startActivity(new Intent(mContext, ProfileActivity.class));
+            if (Util.isInternetAvailable(mContext))
+                startActivity(new Intent(mContext, ProfileActivity.class));
+            else
+                Util.showMessageWithOk(MainActivity.this, "No Internet connection.");
             return true;
         }
         return super.onOptionsItemSelected(item);
