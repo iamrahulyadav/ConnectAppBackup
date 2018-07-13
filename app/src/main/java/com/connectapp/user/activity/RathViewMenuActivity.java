@@ -106,7 +106,8 @@ public class RathViewMenuActivity extends AppCompatActivity {
 				}
 
 				/*if (enteredSchoolCode.isEmpty()) {
-					Toast.makeText(mContext, "Please enter the School Code.", Toast.LENGTH_LONG).show();
+					Toast.makeText(mContext, "Please ent
+					er the School Code.", Toast.LENGTH_LONG).show();
 				} else if (enteredSchoolCode.length() < 11) {
 					Toast.makeText(mContext, "Please enter the correct School Code.", Toast.LENGTH_LONG).show();
 				} */
