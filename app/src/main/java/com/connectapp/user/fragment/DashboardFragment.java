@@ -32,6 +32,7 @@ import com.connectapp.user.data.Thread;
 import com.connectapp.user.data.Threads;
 import com.connectapp.user.data.User;
 import com.connectapp.user.data.UserClass;
+import com.connectapp.user.db.MembersDB;
 import com.connectapp.user.members.MembersDirectory;
 import com.connectapp.user.model.UserChatClass;
 import com.connectapp.user.syncadapter.DBConstants;
@@ -275,6 +276,13 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Members Directory")) {
 
                     UserClass userClass = Util.fetchUserClass(mContext);
+                    boolean isMembersDirectoryEmpty = new MembersDB().isMembersDirectoryEmpty(mContext);
+
+                    if (isMembersDirectoryEmpty) {
+                        userClass.setIsMembersDirectoryComplete(false);
+                        userClass.setCurrentCityIndex(-1);
+                        Util.saveUserClass(mContext, userClass);
+                    }
                     if (userClass.getIsMembersDirectoryComplete()) {
                         Intent intent = new Intent(mContext, MembersDirectory.class);
                         intent.putExtra("thread", threadList.get(position));
@@ -289,6 +297,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                             Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
                         }
                     }
+
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
 
                    /* Snackbar sb = Snackbar.make(view, "Ekal Prayash", Snackbar.LENGTH_LONG).setAction("Action", null);

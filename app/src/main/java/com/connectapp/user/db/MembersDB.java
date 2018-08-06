@@ -208,4 +208,20 @@ public class MembersDB implements DBConstants {
             return true;
         }
     }
+
+    public Boolean isMembersDirectoryEmpty(Context context) {
+        SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getReadableDatabase();
+		/*Cursor cur = mdb.query(HISTORY_TABLE, columns, BLOCK_DISTRICT_ID + "=?" + "AND " + BLOCK_PROJ_TYPE + "=?", new String[] { districtId,
+				projectType }, null, null, null);*/
+        Cursor cur = mdb.query(HISTORY_TABLE, null, null, null, null, null, null);
+        if (cur.moveToFirst()) {
+            // NOT EMPTY
+            return false;
+
+        } else {
+            // IS EMPTY
+            return true;
+        }
+
+    }
 }
