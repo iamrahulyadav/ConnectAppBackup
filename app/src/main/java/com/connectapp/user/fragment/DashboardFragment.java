@@ -281,6 +281,8 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     if (isMembersDirectoryEmpty) {
                         userClass.setIsMembersDirectoryComplete(false);
                         userClass.setCurrentCityIndex(-1);
+                        userClass.setIsFirstTimeAccess(true);
+                        userClass.setCurrentMemberCount(0);
                         Util.saveUserClass(mContext, userClass);
                     }
                     if (userClass.getIsMembersDirectoryComplete()) {

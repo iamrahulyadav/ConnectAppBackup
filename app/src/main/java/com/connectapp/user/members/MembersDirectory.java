@@ -151,16 +151,16 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
     private void fetchMembersDirectory() {
         UserClass userClass = Util.fetchUserClass(mContext);
 
-        Log.d("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
+        Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
         if (userClass != null && userClass.getCurrentCityIndex() == -1) {
-            Log.d("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
+            Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
             pDialog.show();
             cityMap = userClass.getCityName();
             isFetchMembers = true;
             volleyTaskManager.doGetMembersDirectory(0);
 
         } else if (userClass != null && userClass.getCurrentCityIndex() != -1) {
-            Log.d("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
+            Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
             if (!userClass.getIsMembersDirectoryComplete()) {
                 pDialog.show();
                 cityMap = userClass.getCityName();
@@ -179,7 +179,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
     public void onSuccess(JSONObject resultJsonObject) {
 
         if (isCheckUpdate) {
-            Log.d("Result", "" + resultJsonObject);
+            Log.e("Result", "" + resultJsonObject);
             isCheckUpdate = false;
             if (resultJsonObject.optString("status").trim().equalsIgnoreCase("200")) {
                 UserClass userClass = Util.fetchUserClass(mContext);
@@ -198,26 +198,26 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
         } else if (isFetchMembers) {
             isFetchMembers = false;
-            //Log.d(TAG, "onSuccess: " + resultJsonObject);
+            //Log.e(TAG, "onSuccess: " + resultJsonObject);
             if (resultJsonObject.optString("code").trim().equalsIgnoreCase("200")) {
 
                 int memberCount = Integer.parseInt(resultJsonObject.optString("memberCount").trim());
                 int cityCount = Integer.parseInt(resultJsonObject.optString("cityCount").trim());
 
-                Log.d("Member", "Member count: " + memberCount);
-                Log.d("Member", "City Count: " + cityCount);
+                Log.e("Member", "Member count: " + memberCount);
+                Log.e("Member", "City Count: " + cityCount);
                 mUserClass = Util.fetchUserClass(mContext);
 
                 //PARSING RESPONSE
                 JSONArray responseArray = resultJsonObject.optJSONArray("dir");
-                Log.d("Response Array Length", "Response Array length: " + responseArray.length());
+                Log.e("Response Array Length", "Response Array length: " + responseArray.length());
 
                 String cityName = responseArray.optJSONObject(0).optString("cityName").trim();
                 JSONArray memberArray = responseArray.optJSONObject(0).optJSONArray("members");
-                Log.d("member Array Length", "member Array length: " + memberArray.length());
+                Log.e("member Array Length", "member Array length: " + memberArray.length());
 
                 // Parse members
-                Log.d("City name", "City Name: " + cityName);
+                Log.e("City name", "City Name: " + cityName);
                 parseAndStoreMember(memberArray, cityName);
 
                 // SAVE CITY NAME
@@ -225,15 +225,15 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
                 int currentMemberCount = mUserClass.getCurrentMemberCount() + memberArray.length();
 
-                Log.d("Current Member", "current member count: " + currentMemberCount);
-                Log.d("total count", "Total member count: " + memberCount);
+                Log.e("Current Member", "current member count: " + currentMemberCount);
+                Log.e("total count", "Total member count: " + memberCount);
 
                 double ratio = ((double) currentMemberCount / (double) memberCount) * 100;
-                Log.d("Ratio", "Ratio: " + ratio);
+                Log.e("Ratio", "Ratio: " + ratio);
 
                 int progress = (int) ratio;
 
-                Log.d("PROGRESS", "Progress: " + progress);
+                Log.e("PROGRESS", "Progress: " + progress);
                 pDialog.setProgress(progress);
 
                 mUserClass.setCurrentMemberCount(currentMemberCount);
@@ -254,7 +254,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
                     volleyTaskManager.doGetMembersDirectory(currentNode);
                 } else if (currentNode == cityCount) {
 
-                    Log.d("TAG", "Server current version: " + serverCurrentVersion);
+                    Log.e("TAG", "Server current version: " + serverCurrentVersion);
                     // ALL PROCESS COMPLETE
                     mUserClass.setIsMembersDirectoryComplete(true);
                     pDialog.dismiss();

@@ -9,9 +9,8 @@ android {
         targetSdkVersion 22
         // Enabling multidex support.
         multiDexEnabled true
-        versionCode 42
-        versionName '2.5.3'
-
+        versionCode 43
+        versionName '2.5.4'
     }
     dexOptions {
         javaMaxHeapSize "4g"
