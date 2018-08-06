@@ -213,7 +213,7 @@ public class MembersDB implements DBConstants {
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getReadableDatabase();
 		/*Cursor cur = mdb.query(HISTORY_TABLE, columns, BLOCK_DISTRICT_ID + "=?" + "AND " + BLOCK_PROJ_TYPE + "=?", new String[] { districtId,
 				projectType }, null, null, null);*/
-        Cursor cur = mdb.query(HISTORY_TABLE, null, null, null, null, null, null);
+        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, null, null, null, null, null, null);
         if (cur.moveToFirst()) {
             // NOT EMPTY
             return false;

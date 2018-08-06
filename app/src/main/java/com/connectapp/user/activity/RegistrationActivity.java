@@ -58,7 +58,7 @@ public class RegistrationActivity extends Activity implements ServerResponseCall
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(mContext, LoginActivity.class));
-                finish();
+                //finish();
             }
         });
 
