@@ -30,9 +30,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.e(TAG, "From: " + remoteMessage.getFrom());
-        Log.e(TAG, "Data: " + remoteMessage.getData().toString());
-        Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+        //Log.e(TAG, "From: " + remoteMessage.getFrom());
+        //Log.e(TAG, "Data: " + remoteMessage.getData().toString());
+        // Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         if (remoteMessage == null)
             return;
 
@@ -92,7 +92,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
-                Log.e("In Background","Not In Background");
+                Log.e("In Background", "Not In Background");
                 Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
                 pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
@@ -101,18 +101,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
                 notificationUtils.playNotificationSound();
             } else {
-                Log.e("Not in background","In background: "+message);
+                Log.e("Not in background", "In background: " + message);
                 // app is in background, show the notification in notification tray
                 Intent resultIntent = new Intent(getApplicationContext(), ChatContactsActivity.class);
                 resultIntent.putExtra("message", message);
 
                 // check for image attachment
                 if (TextUtils.isEmpty(imageUrl)) {
-                    Log.e("ImageURL","Empty");
+                    Log.e("ImageURL", "Empty");
                     showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
                 } else {
                     // image is present, show notification with image
-                    Log.e("ImageURL","Not Empty");
+                    Log.e("ImageURL", "Not Empty");
                     showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
                 }
             }
@@ -138,13 +138,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     int unreadCount = student.unreadMsgCount;
                     Log.e("Unread Message", "Before: " + student.unreadMsgCount);
                     student.unreadMsgCount = unreadCount + 1;
-                    Log.e("Unread Message", "After Increent: " + student.unreadMsgCount);
+                    Log.e("Unread Message", "After Increment: " + student.unreadMsgCount);
 
                     //Remove the item
                     studentArrayList.remove(i);
                     Log.e("Size: ", "Remove Size: " + studentArrayList.size());
                     //Push the item at Top
-                    studentArrayList.add(0,student);
+                    studentArrayList.add(0, student);
                     Log.e("Size: ", "Added Size: " + studentArrayList.size());
                 }
 

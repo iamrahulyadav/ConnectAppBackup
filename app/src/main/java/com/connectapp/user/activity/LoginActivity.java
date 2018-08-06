@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.connectapp.user.R;
 import com.connectapp.user.constant.Consts;
 import com.connectapp.user.data.UserClass;
+import com.connectapp.user.firebase.Config;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.view.FloatLabeledEditText;
 import com.connectapp.user.volley.ServerResponseCallback;
@@ -81,9 +83,14 @@ public class LoginActivity extends Activity implements ServerResponseCallback {
             if (etPassword.getText().toString().trim().isEmpty())
                 Util.showMessageWithOk(LoginActivity.this, "Please enter your phone number.");
             else {
-
+                // Fetch reg id from shared preferences
+                SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+                String deviceToken = pref.getString("regId", null);
+                Log.e(TAG, "Firebase reg id: " + deviceToken);
                 HashMap<String, String> requestMap = new HashMap<String, String>();
                 requestMap.put("phone", etPassword.getText().toString().trim());
+                // Device token for push notification
+                requestMap.put("deviceToken", "" + deviceToken);
 
                 volleyTaskManager.doLogin(requestMap, true);
                 //	LoginTask loginTask = new LoginTask(mContext);

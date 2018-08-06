@@ -18,6 +18,7 @@
         android:visibility="visible"
         android:id="@+id/ivUserChat" />
 
+<!--
     <me.himanshusoni.chatmessageview.ChatMessageView
         android:id="@+id/contentMessageChat"
         android:layout_width="match_parent"
@@ -67,6 +68,7 @@
             android:layout_below="@+id/img_chat"
             android:layout_toEndOf="@+id/img_chat" />
     </me.himanshusoni.chatmessageview.ChatMessageView>
+-->
 
 
 </RelativeLayout>

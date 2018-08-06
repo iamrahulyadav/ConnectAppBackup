@@ -2,7 +2,7 @@ package com.connectapp.user.db;
 
 public interface DBConstants {
 
-	public static final int DB_VERSION = 3; // DB version changed on 12-4-2017
+	public static final int DB_VERSION = 4; // DB version changed on 12-4-2017
 
 	public static final String DB_NAME = "SubmissionHistory.db";
 	/* public static final String DB_NAME = Environment.getExternalStorageDirectory() + "/SubmissionHistory.db";*/ //This is for debugging purpose only

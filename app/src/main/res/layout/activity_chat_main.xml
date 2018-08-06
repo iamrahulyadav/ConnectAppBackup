@@ -86,7 +86,7 @@
             android:background="@drawable/grey_border_box"
             android:padding="2dp">
 
-            <ImageView
+           <!-- <ImageView
                 android:id="@+id/buttonEmoji"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -96,7 +96,8 @@
                 android:layout_centerVertical="true"
                 android:padding="4dp"
                 android:src="@drawable/smiley" />
-
+-->
+<!--
             <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
                 android:id="@+id/editTextMessage"
                 android:layout_width="match_parent"
@@ -108,6 +109,7 @@
                 android:paddingLeft="7dp"
                 android:textAppearance="?android:textAppearance"
                 emojicon:emojiconSize="28sp" />
+-->
 
             <ImageView
                 android:id="@+id/buttonAttachFile"

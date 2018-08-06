@@ -73,8 +73,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+/*import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;*/
 
 /**
  * Created by ritwik on 3/11/17.
@@ -109,9 +109,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView rvListMessage;
     private LinearLayoutManager mLinearLayoutManager;
     private ImageView btSendMessage, btEmoji, buttonAttachFile;
-    private EmojiconEditText edMessage;
+  //  private EmojiconEditText edMessage;
     private View contentRoot;
-    private EmojIconActions emojIcon;
+  //  private EmojIconActions emojIcon;
     //  private LinearLayout llWelcomeMsg;
     //CLass Model
     private UserModel userModel;
@@ -167,15 +167,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void bindViews() {
         contentRoot = findViewById(R.id.contentRoot);
-        edMessage = (EmojiconEditText) findViewById(R.id.editTextMessage);
+       // edMessage = (EmojiconEditText) findViewById(R.id.editTextMessage);
         btSendMessage = (ImageView) findViewById(R.id.buttonMessage);
         buttonAttachFile = (ImageView) findViewById(R.id.buttonAttachFile);
         btSendMessage.setOnClickListener(this);
         buttonAttachFile.setOnClickListener(this);
-        btEmoji = (ImageView) findViewById(R.id.buttonEmoji);
+        //btEmoji = (ImageView) findViewById(R.id.buttonEmoji);
         //llWelcomeMsg = (LinearLayout) findViewById(R.id.llWelcomeMsg);
-        emojIcon = new EmojIconActions(this, contentRoot, edMessage, btEmoji);
-        emojIcon.ShowEmojIcon();
+        //emojIcon = new EmojIconActions(this, contentRoot, edMessage, btEmoji);
+       // emojIcon.ShowEmojIcon();
         rvListMessage = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
@@ -274,9 +274,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String keyMap = sortKeyMap(result);
         Log.e("KeyMap", "KeyMap: " + keyMap);
         UserChatClass userChatClass = Util.fetchUserChatClass(mContext);
-        ChatModel model = new ChatModel(userModel, edMessage.getText().toString(), receiverFirebaseID, userChatClass.firebaseId, receiverInstanceID, userChatClass.getEmail(), receiverEmail, keyMap, Calendar.getInstance().getTime().getTime() + "", null);
-        mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(model);
-        edMessage.setText(null);
+        //ChatModel model = new ChatModel(userModel, edMessage.getText().toString(), receiverFirebaseID, userChatClass.firebaseId, receiverInstanceID, userChatClass.getEmail(), receiverEmail, keyMap, Calendar.getInstance().getTime().getTime() + "", null);
+      //  mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(model);
+        //edMessage.setText(null);
     }
 
     ChatFirebaseAdapter firebaseAdapter;

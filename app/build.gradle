@@ -5,12 +5,12 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.connectapp.user"
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 22
         // Enabling multidex support.
         multiDexEnabled true
-        versionCode 40
-        versionName '2.5.2'
+        versionCode 42
+        versionName '2.5.3'
 
     }
     dexOptions {
@@ -21,8 +21,19 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
     productFlavors {
+    }
+    lintOptions {
+
+        checkReleaseBuilds false
+
     }
 }
 
@@ -37,8 +48,8 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
 
     //CHAT UI
-    compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
-    compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.3'
+//    compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
+//    compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.3'
 
     // AUTH
     compile 'com.google.android.gms:play-services-auth:9.2.0'

@@ -18,7 +18,7 @@ import com.connectapp.user.util.Util;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 
-import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
+//import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 
 /**
  * Created by ritwik.rai
@@ -126,17 +126,17 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel, Chat
     public class MyChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tvTimestamp, tvLocation, tv_filename;
-        EmojiconTextView txtMessage;
+        //EmojiconTextView txtMessage;
         ImageView ivUser, ivChatPhoto;
 
         public MyChatViewHolder(View itemView) {
             super(itemView);
-            tvTimestamp = (TextView) itemView.findViewById(R.id.timestamp);
-            txtMessage = (EmojiconTextView) itemView.findViewById(R.id.txtMessage);
-            tvLocation = (TextView) itemView.findViewById(R.id.tvLocation);
-            ivChatPhoto = (ImageView) itemView.findViewById(R.id.img_chat);
-            ivUser = (ImageView) itemView.findViewById(R.id.ivUserChat);
-            tv_filename = (TextView) itemView.findViewById(R.id.tv_filename);
+            //tvTimestamp = (TextView) itemView.findViewById(R.id.timestamp);
+           // txtMessage = (EmojiconTextView) itemView.findViewById(R.id.txtMessage);
+            //tvLocation = (TextView) itemView.findViewById(R.id.tvLocation);
+            //ivChatPhoto = (ImageView) itemView.findViewById(R.id.img_chat);
+            //ivUser = (ImageView) itemView.findViewById(R.id.ivUserChat);
+           // tv_filename = (TextView) itemView.findViewById(R.id.tv_filename);
         }
 
         @Override
@@ -154,8 +154,8 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel, Chat
         }
 
         public void setTxtMessage(String message) {
-            if (txtMessage == null) return;
-            txtMessage.setText(message);
+           /* if (txtMessage == null) return;
+            txtMessage.setText(message);*/
         }
 
         public void setIvUser(String urlPhotoUser) {

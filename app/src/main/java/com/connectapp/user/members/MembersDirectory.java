@@ -385,8 +385,12 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
                             @Override
                             public void onSubmit() {
-
-                                reFetchMembersDirectory();
+                                boolean isTableCleared = new MembersDB().clearTable(mContext);
+                                if (isTableCleared) {
+                                    reFetchMembersDirectory();
+                                } else {
+                                    Toast.makeText(mContext, "Please Try Again", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
@@ -410,5 +414,6 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
         Util.saveUserClass(mContext, userClass);
         fetchMembersDirectory();
     }
+
 
 }

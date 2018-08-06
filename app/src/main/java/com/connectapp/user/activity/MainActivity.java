@@ -223,16 +223,16 @@ public class MainActivity extends AppCompatActivity implements DBConstants, OnCl
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
-        } else if (item.getItemId() == R.id.menu_chat) {
+        } /*else if (item.getItemId() == R.id.menu_chat) {
 
             Util.showMessageWithOk(MainActivity.this, "ConnectApp Chat! Coming Soon.");
-            /*if (Util.isInternetAvailable(mContext)) {
+            *//*if (Util.isInternetAvailable(mContext)) {
                 verifyUserLogin();
             } else {
                 Util.showMessageWithOk(MainActivity.this, "You do not have an active internet connection.");
-            }*/
+            }*//*
             return true;
-        } else if (item.getItemId() == R.id.menu_edit_profile) {
+        } */else if (item.getItemId() == R.id.menu_edit_profile) {
             if (Util.isInternetAvailable(mContext))
                 startActivity(new Intent(mContext, ProfileActivity.class));
             else

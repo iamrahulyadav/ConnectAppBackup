@@ -17,6 +17,7 @@
         android:layout_alignBottom="@+id/contentMessageChat"
         android:visibility="visible" />
 
+<!--
     <me.himanshusoni.chatmessageview.ChatMessageView
         android:id="@+id/contentMessageChat"
         android:layout_width="match_parent"
@@ -56,6 +57,7 @@
             android:textColor="@color/chat_grey"
             android:textSize="10sp" />
     </me.himanshusoni.chatmessageview.ChatMessageView>
+-->
 
 
 </RelativeLayout>

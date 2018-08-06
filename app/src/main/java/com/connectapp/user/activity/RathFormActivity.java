@@ -90,9 +90,9 @@ import java.util.HashMap;
 
 /**
  * @author raisahab.ritwik
- *         <p>
- *         Rath Form Activity.
- *         </p>
+ * <p>
+ * Rath Form Activity.
+ * </p>
  */
 public class RathFormActivity extends AppCompatActivity implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener,
         ServerResponseCallback, FusedLocationCallback, LocationCallback, OnClickListener {
@@ -581,18 +581,19 @@ public class RathFormActivity extends AppCompatActivity implements LocationListe
      * onclick listener for submit button
      */
     public void onSubmitClick(View v) {
-        String rathNumber = "";
-        String comments = "";
+        String rathNumber = dropDownActivity_rathNumber.getText().toString().trim();
+        String comments = et_comments.getText().toString().trim();
+        String pictureCategory = dropDownActivity_pictureCategory.getText().toString().trim();
 
-        if (ll_dynamicField.getVisibility() == View.VISIBLE) {
+        /*if (ll_dynamicField.getVisibility() == View.VISIBLE) {
             rathNumber = dropDownActivity_rathNumber.getText().toString().trim();
             comments = et_comments.getText().toString().trim();
-        }
+        }*/
         if (imagesList.size() < 1) {
             Util.showMessageWithOk(RathFormActivity.this, "Please take a picture first.");
         } else if (rathNumber.length() < 1) {
             Util.showMessageWithOk(RathFormActivity.this, "Please enter the rath number.");
-        } else if (dropDownActivity_pictureCategory.getText().toString().trim().isEmpty()) {
+        } else if (pictureCategory.isEmpty()) {
             Util.showMessageWithOk(RathFormActivity.this, "Please select a picture category.");
         } else if (Util.isInternetAvailable(mContext)) {
 
