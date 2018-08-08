@@ -50,7 +50,8 @@ public class MembersDB implements DBConstants {
                 PIN, TOWN, PIC};
 
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getReadableDatabase();
-        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, columns, CITY + "=?", new String[]{cityName}, null, null, null);
+        String orderProtocol = "CAST (" + ID_NO + " AS INTEGER)" + " ASC";
+        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, columns, CITY + "=?", new String[]{cityName}, null, null, orderProtocol);
 
 		/*Cursor cur = mdb.query(HISTORY_TABLE, columns, BLOCK_DISTRICT_ID + "=?" + "AND " + BLOCK_PROJ_TYPE + "=?", new String[] { districtId,
 				projectType }, null, null, null);*/
