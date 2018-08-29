@@ -266,7 +266,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
         et_anchal.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.e(TAG, "andchal on text changed count " + s.length());
+                //Log.e(TAG, "andchal on text changed count " + s.length());
                 if (s.length() == 2)
                     et_sankul.requestFocus();
             }

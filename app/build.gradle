@@ -45,6 +45,7 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.2.0'
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
 
     //CHAT UI
 //    compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'

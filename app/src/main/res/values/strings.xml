@@ -250,4 +250,8 @@
     <string name="select_picture_title">Get Photo From</string>
     <string name="sendPhotoGallery">Photo Gallery</string>
 
+    <string name="short_lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="desc_fts_mem_dir">View FTS Members Directory.</string>
+    <string name="desc_shss_mem_dir">View SHSS Members Directory.</string>
+
 </resources>

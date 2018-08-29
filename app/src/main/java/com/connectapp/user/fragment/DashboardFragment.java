@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.connectapp.user.R;
 import com.connectapp.user.activity.ChatContactsActivity;
 import com.connectapp.user.activity.ComingSoonActivity;
+import com.connectapp.user.activity.EkalChaptersActivity;
 import com.connectapp.user.activity.KeyWordActivity;
 import com.connectapp.user.activity.RathFormActivity;
 import com.connectapp.user.activity.ResourcesActivity;
@@ -275,30 +276,9 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     //Toast.makeText(mContext, "Coming Soon....", Toast.LENGTH_SHORT).show();
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Members Directory")) {
 
-                    UserClass userClass = Util.fetchUserClass(mContext);
-                    boolean isMembersDirectoryEmpty = new MembersDB().isMembersDirectoryEmpty(mContext);
-                    Log.e("isMembersDirectoryEmpty","isMembersDirectoryEmpty: "+isMembersDirectoryEmpty);
-                    if (isMembersDirectoryEmpty) {
-                        userClass.setIsMembersDirectoryComplete(false);
-                        userClass.setCurrentCityIndex(-1);
-                        userClass.setIsFirstTimeAccess(true);
-                        userClass.setCurrentMemberCount(0);
-                        Util.saveUserClass(mContext, userClass);
-                    }
-                    if (userClass.getIsMembersDirectoryComplete()) {
-                        Intent intent = new Intent(mContext, MembersDirectory.class);
-                        intent.putExtra("thread", threadList.get(position));
-                        startActivity(intent);
-                    } else {
-                        if (Util.isInternetAvailable(mContext)) {
-                            Intent intent = new Intent(mContext, MembersDirectory.class);
-                            intent.putExtra("thread", threadList.get(position));
-                            startActivity(intent);
-
-                        } else {
-                            Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    Intent intent = new Intent(mContext, EkalChaptersActivity.class);
+                    intent.putExtra("thread", threadList.get(position));
+                    startActivity(intent);
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
 

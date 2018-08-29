@@ -150,11 +150,16 @@
         <activity
             android:name=".members.MemberViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MemberViewTheme"></activity>
+            android:theme="@style/MemberViewTheme" />
+
+        <activity
+            android:name=".activity.EkalChaptersActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.ResourcesActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyCompatTheme"></activity>
+            android:theme="@style/Theme.MyCompatTheme" />
         <activity
             android:name=".dropDownActivity.StateCodeActivity"
             android:label="Select your State"
