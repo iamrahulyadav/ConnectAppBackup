@@ -279,6 +279,30 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     Intent intent = new Intent(mContext, EkalChaptersActivity.class);
                     intent.putExtra("thread", threadList.get(position));
                     startActivity(intent);
+                  /*  UserClass userClass = Util.fetchUserClass(mContext);
+                    boolean isMembersDirectoryEmpty = new MembersDB().isMembersDirectoryEmpty(mContext);
+                    Log.e("isMembersDirectoryEmpty", "isMembersDirectoryEmpty: " + isMembersDirectoryEmpty);
+                    if (isMembersDirectoryEmpty) {
+                        userClass.setIsMembersDirectoryComplete(false);
+                        userClass.setCurrentCityIndex(-1);
+                        userClass.setIsFirstTimeAccess(true);
+                        userClass.setCurrentMemberCount(0);
+                        Util.saveUserClass(mContext, userClass);
+                    }
+                    if (userClass.getIsMembersDirectoryComplete()) {
+                        Intent intent = new Intent(mContext, MembersSHSSDirectory.class);
+                        intent.putExtra("thread", threadList.get(position));
+                        startActivity(intent);
+                    } else {
+                        if (Util.isInternetAvailable(mContext)) {
+                            Intent intent = new Intent(mContext, MembersSHSSDirectory.class);
+                            intent.putExtra("thread", threadList.get(position));
+                            startActivity(intent);
+
+                        } else {
+                            Toast.makeText(mContext, "No Internet Connection.", Toast.LENGTH_SHORT).show();
+                        }
+                    }*/
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
 

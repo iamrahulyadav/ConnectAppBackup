@@ -1,7 +1,5 @@
 package com.connectapp.user.db;
 
-import java.util.ArrayList;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,14 +8,16 @@ import android.util.Log;
 
 import com.connectapp.user.data.Member;
 
-public class MembersDB implements DBConstants {
-    private static MembersDB obj = null;
+import java.util.ArrayList;
+
+public class MembersSHSSDB implements DBConstants {
+    private static MembersSHSSDB obj = null;
 
 
-    public synchronized static MembersDB obj() {
+    public synchronized static MembersSHSSDB obj() {
 
         if (obj == null)
-            obj = new MembersDB();
+            obj = new MembersSHSSDB();
         return obj;
 
     }
@@ -28,7 +28,7 @@ public class MembersDB implements DBConstants {
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getWritableDatabase();
         mdb.beginTransaction();
         try {
-            mdb.insert(MEMBERS_DIRECTORY_TABLE, null, cv);
+            mdb.insert(MEMBERS_DIRECTORY_SHSS_TABLE, null, cv);
             mdb.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class MembersDB implements DBConstants {
 
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getReadableDatabase();
         String orderProtocol = "CAST (" + SEQUENCE + " AS INTEGER)" + " ASC";
-        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, columns, CITY + "=?", new String[]{cityName}, null, null, orderProtocol);
+        Cursor cur = mdb.query(MEMBERS_DIRECTORY_SHSS_TABLE, columns, CITY + "=?", new String[]{cityName}, null, null, orderProtocol);
 
 
         if (!isDatabaseEmpty(cur)) {
@@ -79,7 +79,7 @@ public class MembersDB implements DBConstants {
                 }
                 cur.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                e. printStackTrace();
             }
         }
         return members;
@@ -106,7 +106,7 @@ public class MembersDB implements DBConstants {
                 PIN, TOWN, PIC};
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(mContext).getReadableDatabase();
         //Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, columns, NAME + " LIKE '%" + name + "%'", null, null, null, null, null);
-        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, columns, NAME + " LIKE '%" + name + "%'" + " OR " + MOBILE + " LIKE '%"
+        Cursor cur = mdb.query(MEMBERS_DIRECTORY_SHSS_TABLE, columns, NAME + " LIKE '%" + name + "%'" + " OR " + MOBILE + " LIKE '%"
                 + name + "%'" + " OR " + EMAIL + " LIKE '%" + name + "%'", null, null, null, null, null);
 
         if (!isDatabaseEmpty(cur)) {
@@ -155,7 +155,7 @@ public class MembersDB implements DBConstants {
                 PIN, TOWN, PIC};
 
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getReadableDatabase();
-        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, columns, ID + "=?", new String[]{id}, null, null, null);
+        Cursor cur = mdb.query(MEMBERS_DIRECTORY_SHSS_TABLE, columns, ID + "=?", new String[]{id}, null, null, null);
 
 		/*Cursor cur = mdb.query(HISTORY_TABLE, columns, BLOCK_DISTRICT_ID + "=?" + "AND " + BLOCK_PROJ_TYPE + "=?", new String[] { districtId,
 				projectType }, null, null, null);*/
@@ -197,7 +197,7 @@ public class MembersDB implements DBConstants {
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getWritableDatabase();
         mdb.beginTransaction();
         try {
-            mdb.delete(MEMBERS_DIRECTORY_TABLE, null, null);
+            mdb.delete(MEMBERS_DIRECTORY_SHSS_TABLE, null, null);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -211,7 +211,7 @@ public class MembersDB implements DBConstants {
         SQLiteDatabase mdb = ConnectAppDBHelper.getInstance(context).getReadableDatabase();
 		/*Cursor cur = mdb.query(HISTORY_TABLE, columns, BLOCK_DISTRICT_ID + "=?" + "AND " + BLOCK_PROJ_TYPE + "=?", new String[] { districtId,
 				projectType }, null, null, null);*/
-        Cursor cur = mdb.query(MEMBERS_DIRECTORY_TABLE, null, null, null, null, null, null);
+        Cursor cur = mdb.query(MEMBERS_DIRECTORY_SHSS_TABLE, null, null, null, null, null, null);
         if (cur.moveToFirst()) {
             // NOT EMPTY
             return false;

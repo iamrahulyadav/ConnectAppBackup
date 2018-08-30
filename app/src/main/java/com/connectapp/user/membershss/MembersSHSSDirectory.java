@@ -1,9 +1,4 @@
-package com.connectapp.user.members;
-
-import java.util.HashMap;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+package com.connectapp.user.membershss;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -19,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,12 +26,18 @@ import com.connectapp.user.adapter.CityListAdapter;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.db.DBConstants;
 import com.connectapp.user.db.MembersDB;
+import com.connectapp.user.db.MembersSHSSDB;
 import com.connectapp.user.util.AlertDialogCallBack;
 import com.connectapp.user.util.Util;
 import com.connectapp.user.volley.ServerResponseCallback;
 import com.connectapp.user.volley.VolleyTaskManager;
 
-public class MembersDirectory extends AppCompatActivity implements OnClickListener, ServerResponseCallback, DBConstants {
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+public class MembersSHSSDirectory extends AppCompatActivity implements OnClickListener, ServerResponseCallback, DBConstants {
 
     private Context mContext;
     private TextView tv_notification_on_update;
@@ -60,7 +60,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members_directory);
-        mContext = MembersDirectory.this;
+        mContext = MembersSHSSDirectory.this;
 
         tv_notification_on_update = (TextView) findViewById(R.id.tv_notification_on_update);
         volleyTaskManager = new VolleyTaskManager(mContext);
@@ -106,7 +106,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
             fetchMembersDirectory();
         }
         UserClass mUserClass = Util.fetchUserClass(mContext);
-        if (mUserClass != null && mUserClass.getIsMembersDirectoryComplete()) {
+        if (mUserClass != null && mUserClass.getIsMembersSHSSDirectoryComplete()) {
             showCityList();
         }
     }
@@ -133,7 +133,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
         android.widget.AutoCompleteTextView searchTextView = (android.widget.AutoCompleteTextView) searchView
                 .findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
-            java.lang.reflect.Field mCursorDrawableRes = android.widget.TextView.class.getDeclaredField("mCursorDrawableRes");
+            java.lang.reflect.Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
             mCursorDrawableRes.set(searchTextView, R.drawable.cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
         } catch (Exception e) {
@@ -144,29 +144,29 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
     private void getMembersDirectoy(int currentNode) {
 
-        volleyTaskManager.doGetMembersDirectory(currentNode);
+        volleyTaskManager.doGetMembersDirectorySHSS(currentNode);
 
     }
 
     private void fetchMembersDirectory() {
         UserClass userClass = Util.fetchUserClass(mContext);
 
-        Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
-        if (userClass != null && userClass.getCurrentCityIndex() == -1) {
-            Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
+        Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndexSHSS());
+        if (userClass != null && userClass.getCurrentCityIndexSHSS() == -1) {
+            Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndexSHSS());
             pDialog.show();
-            cityMap = userClass.getCityName();
+            cityMap = userClass.getCityNameSHSS();
             isFetchMembers = true;
-            volleyTaskManager.doGetMembersDirectory(0);
+            volleyTaskManager.doGetMembersDirectorySHSS(0);
 
-        } else if (userClass != null && userClass.getCurrentCityIndex() != -1) {
-            Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndex());
-            if (!userClass.getIsMembersDirectoryComplete()) {
+        } else if (userClass != null && userClass.getCurrentCityIndexSHSS() != -1) {
+            Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndexSHSS());
+            if (!userClass.getIsMembersSHSSDirectoryComplete()) {
                 pDialog.show();
                 cityMap = userClass.getCityName();
-                currentNode = Util.fetchUserClass(mContext).getCurrentCityIndex();
+                currentNode = Util.fetchUserClass(mContext).getCurrentCityIndexSHSS();
                 isFetchMembers = true;
-                volleyTaskManager.doGetMembersDirectory(currentNode);
+                volleyTaskManager.doGetMembersDirectorySHSS(currentNode);
             } else {
                 //Toast.makeText(mContext, "Members directory already Up-to-date.", Toast.LENGTH_LONG).show();
                 // DONT SHOW PROGRESS- SHOW MEMBERS DIRECTORY
@@ -186,12 +186,12 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
                 serverCurrentVersion = Integer.parseInt(resultJsonObject.optString("currentVersion").trim());
                 //Toast.makeText(mContext, "CurrentVersion " + serverCurrentVersion, Toast.LENGTH_SHORT).show();
                 //Toast.makeText(mContext, "DeviceVersion "+userClass.getCurrentMemebersDirVersion(), Toast.LENGTH_SHORT).show();
-                if (userClass.getCurrentMemebersDirVersion() < serverCurrentVersion && !Util.fetchUserClass(mContext).getIsFirstTimeAccess()) {
+                if (userClass.getCurrentMemebersDirVersionSHSS() < serverCurrentVersion && !Util.fetchUserClass(mContext).getIsFirstTimeAccessSHSS()) {
                     //Toast.makeText(mContext, "New Update available", Toast.LENGTH_SHORT).show();
                     tv_notification_on_update.setVisibility(View.VISIBLE);
                 }
             }
-            if (Util.fetchUserClass(mContext).getIsFirstTimeAccess() && Util.isInternetAvailable(mContext)) {
+            if (Util.fetchUserClass(mContext).getIsFirstTimeAccessSHSS() && Util.isInternetAvailable(mContext)) {
                 // Accessing the members directory for the first time
                 fetchMembersDirectory();
             }
@@ -223,7 +223,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
                 // SAVE CITY NAME
                 cityMap.put("" + currentNode, "" + cityName.trim());
 
-                int currentMemberCount = mUserClass.getCurrentMemberCount() + memberArray.length();
+                int currentMemberCount = mUserClass.getCurrentMemberCountSHSS() + memberArray.length();
 
                 Log.e("Current Member", "current member count: " + currentMemberCount);
                 Log.e("total count", "Total member count: " + memberCount);
@@ -236,30 +236,30 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
                 Log.e("PROGRESS", "Progress: " + progress);
                 pDialog.setProgress(progress);
 
-                mUserClass.setCurrentMemberCount(currentMemberCount);
-                mUserClass.setTotalMemberCount(memberCount);
-                mUserClass.setTotalCityCount(cityCount);
-                mUserClass.setCityName(cityMap);
+                mUserClass.setCurrentMemberCountSHSS(currentMemberCount);
+                mUserClass.setTotalMemberCountSHSS(memberCount);
+                mUserClass.setTotalCityCountSHSS(cityCount);
+                mUserClass.setCityNameSHSS(cityMap);
 
                 // Move to the next node
                 currentNode++;
-                mUserClass.setCurrentCityIndex(currentNode);
+                mUserClass.setCurrentCityIndexSHSS(currentNode);
 
                 Util.saveUserClass(mContext, mUserClass);
                 if (currentNode < cityCount)// Check if the last Node has already been called.
                 {
-                    mUserClass.setIsMembersDirectoryComplete(false);
+                    mUserClass.setIsMembersSHSSDirectoryComplete(false);
 
                     isFetchMembers = true;
-                    volleyTaskManager.doGetMembersDirectory(currentNode);
+                    volleyTaskManager.doGetMembersDirectorySHSS(currentNode);
                 } else if (currentNode == cityCount) {
 
                     Log.e("TAG", "Server current version: " + serverCurrentVersion);
                     // ALL PROCESS COMPLETE
-                    mUserClass.setIsMembersDirectoryComplete(true);
+                    mUserClass.setIsMembersSHSSDirectoryComplete(true);
                     pDialog.dismiss();
                     mUserClass.setIsFirstTimeAccess(false);
-                    mUserClass.setCurrentMemebersDirVersion(serverCurrentVersion);
+                    mUserClass.setCurrentMemebersDirVersionSHSS(serverCurrentVersion);
                     findViewById(R.id.llAlert).setVisibility(View.GONE);
                     tv_notification_on_update.setVisibility(View.GONE);
                     Util.showCallBackMessageWithOkCallback(mContext, "Thank you! Please tap on ok to view members.",
@@ -291,7 +291,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
                             @Override
                             public void onSubmit() {
                                 isFetchMembers = true;
-                                volleyTaskManager.doGetMembersDirectory(currentNode);
+                                volleyTaskManager.doGetMembersDirectorySHSS(currentNode);
                             }
 
                             @Override
@@ -307,7 +307,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
     public void onError() {
         pDialog.dismiss();
         tv_notification_on_update.setVisibility(View.GONE);
-        if (mUserClass != null && mUserClass.getIsMembersDirectoryComplete()) {
+        if (mUserClass != null && mUserClass.getIsMembersSHSSDirectoryComplete()) {
             showCityList();
         } else {
             Toast.makeText(mContext, "No intenet Connection.", Toast.LENGTH_SHORT).show();
@@ -319,7 +319,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
     private void showCityList() {
 
         lv_contact = (ListView) findViewById(R.id.lv_contact);
-        HashMap<String, String> cityMap = Util.fetchUserClass(mContext).getCityName();
+        HashMap<String, String> cityMap = Util.fetchUserClass(mContext).getCityNameSHSS();
         if (cityMap != null) {
             CityListAdapter adapter = new CityListAdapter(mContext, cityMap);
             lv_contact.setAdapter(adapter);
@@ -327,8 +327,8 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(mContext, MemberListActivity.class);
-                    intent.putExtra("cityName", Util.fetchUserClass(mContext).getCityName().get("" + position));
+                    Intent intent = new Intent(mContext, MemberListSHSSActivity.class);
+                    intent.putExtra("cityName", Util.fetchUserClass(mContext).getCityNameSHSS().get("" + position));
                     startActivity(intent);
                 }
             });
@@ -368,7 +368,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
             mContentValue.put(TOWN, memberObj.optString("city").trim());
             mContentValue.put(PIC, memberObj.optString("pic").trim());
             mContentValue.put(SEQUENCE, memberObj.optString("sequence").trim());
-            new MembersDB().saveMembersData(mContext, mContentValue);
+            new MembersSHSSDB().saveMembersData(mContext, mContentValue);
         }
     }
 
@@ -385,7 +385,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
                             @Override
                             public void onSubmit() {
-                                boolean isTableCleared = new MembersDB().clearTable(mContext);
+                                boolean isTableCleared = new MembersSHSSDB().clearTable(mContext);
                                 if (isTableCleared) {
                                     reFetchMembersDirectory();
                                 } else {
@@ -408,8 +408,8 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
 
     private void reFetchMembersDirectory() {
         UserClass userClass = Util.fetchUserClass(mContext);
-        userClass.setCurrentCityIndex(-1);
-        userClass.setCurrentMemberCount(0);
+        userClass.setCurrentCityIndexSHSS(-1);
+        userClass.setCurrentMemberCountSHSS(0);
         currentNode = 0;
         Util.saveUserClass(mContext, userClass);
         fetchMembersDirectory();

@@ -45,6 +45,7 @@ public class ConnectAppDBHelper extends SQLiteOpenHelper implements DBConstants 
         db.execSQL("DROP TABLE IF EXISTS " + THREADS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + HISTORY_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + MEMBERS_DIRECTORY_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + MEMBERS_DIRECTORY_SHSS_TABLE);
 
         db.setVersion(DB_VERSION);
 
@@ -54,7 +55,7 @@ public class ConnectAppDBHelper extends SQLiteOpenHelper implements DBConstants 
 
     private String[] getCreatetableStatements() {
 
-        String[] create = new String[3];
+        String[] create = new String[4];
 
         // THREADS table -> _id , threadID, formName, formData , parent_cat_id
         String threadsTableStatement = CREATE_TABLE_BASE + THREADS_TABLE + START_COLUMN + _ID + INTEGER + PRIMARY_KEY
@@ -73,7 +74,15 @@ public class ConnectAppDBHelper extends SQLiteOpenHelper implements DBConstants 
         // MEMBERS_DIRECTORY_TABLE --> _id,
         String membersDirectoryTableStatement = CREATE_TABLE_BASE + MEMBERS_DIRECTORY_TABLE + START_COLUMN + _ID + INTEGER
                 + PRIMARY_KEY + AUTO_ICNREMENT + COMMA + CITY + TEXT + COMMA + ID + TEXT + COMMA + NAME + TEXT + COMMA + ID_NO
-                + TEXT + COMMA + SPOUSE_NAME + TEXT + COMMA + CONTACT_NO + TEXT + COMMA + MOBILE + TEXT + COMMA + EMAIL + TEXT
+                + TEXT + COMMA + SEQUENCE + TEXT + COMMA + SPOUSE_NAME + TEXT + COMMA + CONTACT_NO + TEXT + COMMA + MOBILE + TEXT + COMMA + EMAIL + TEXT
+                + COMMA + DESIGNATION + TEXT + COMMA + ADD1 + TEXT + COMMA + ADD2 + TEXT + COMMA + ADD3 + TEXT + COMMA + PIN
+                + TEXT + COMMA + TOWN + TEXT + COMMA + PIC + TEXT + COMMA + UNIQUE + START_COLUMN + ID + FINISH_COLUMN
+                + ON_CONFLICT_REPLACE + FINISH_COLUMN;
+
+        // MEMBERS_DIRECTORY_TABLE --> _id,
+        String membersDirectorySSHTableStatement = CREATE_TABLE_BASE + MEMBERS_DIRECTORY_SHSS_TABLE + START_COLUMN + _ID + INTEGER
+                + PRIMARY_KEY + AUTO_ICNREMENT + COMMA + CITY + TEXT + COMMA + ID + TEXT + COMMA + NAME + TEXT + COMMA + ID_NO
+                + TEXT + COMMA + SEQUENCE + TEXT + COMMA + SPOUSE_NAME + TEXT + COMMA + CONTACT_NO + TEXT + COMMA + MOBILE + TEXT + COMMA + EMAIL + TEXT
                 + COMMA + DESIGNATION + TEXT + COMMA + ADD1 + TEXT + COMMA + ADD2 + TEXT + COMMA + ADD3 + TEXT + COMMA + PIN
                 + TEXT + COMMA + TOWN + TEXT + COMMA + PIC + TEXT + COMMA + UNIQUE + START_COLUMN + ID + FINISH_COLUMN
                 + ON_CONFLICT_REPLACE + FINISH_COLUMN;
@@ -83,6 +92,7 @@ public class ConnectAppDBHelper extends SQLiteOpenHelper implements DBConstants 
         create[0] = threadsTableStatement;
         create[1] = historyTableStatement;
         create[2] = membersDirectoryTableStatement;
+        create[3] = membersDirectorySSHTableStatement;
 
         return create;
     }

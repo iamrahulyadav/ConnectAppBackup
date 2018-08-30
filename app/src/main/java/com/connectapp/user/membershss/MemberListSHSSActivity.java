@@ -1,4 +1,4 @@
-package com.connectapp.user.members;
+package com.connectapp.user.membershss;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -19,10 +19,11 @@ import com.connectapp.user.R;
 import com.connectapp.user.adapter.MemberListAdapter;
 import com.connectapp.user.data.Member;
 import com.connectapp.user.db.MembersDB;
+import com.connectapp.user.db.MembersSHSSDB;
 
 import java.util.ArrayList;
 
-public class MemberListActivity extends AppCompatActivity {
+public class MemberListSHSSActivity extends AppCompatActivity {
 
     private Context mContext;
     private ListView lv_members;
@@ -35,7 +36,7 @@ public class MemberListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
 
-        mContext = MemberListActivity.this;
+        mContext = MemberListSHSSActivity.this;
 
         lv_members = (ListView) findViewById(R.id.lv_search_result);
 
@@ -43,7 +44,7 @@ public class MemberListActivity extends AppCompatActivity {
         cityName = getIntent().getStringExtra("cityName").trim();
         Log.e("TAG", "CityName: " + cityName);
 
-        members = new MembersDB().getMembers(mContext, cityName);
+        members = new MembersSHSSDB().getMembers(mContext, cityName);
         Log.e("TAG", "member list size: " + members.size());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,7 +58,7 @@ public class MemberListActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    Intent intent = new Intent(mContext, MemberViewActivity.class);
+                    Intent intent = new Intent(mContext, MemberViewSHSSActivity.class);
                     intent.putExtra("member", members.get(position));
                     startActivity(intent);
 

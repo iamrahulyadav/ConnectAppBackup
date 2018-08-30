@@ -39,6 +39,15 @@ public class UserClass implements Serializable {
     public ChatContact selectedStudent;
     public boolean isOfflineLogin = false;
 
+    // SHSS
+    private int currentMemebersDirVersionSHSS = 0;
+    private int currentCityIndexSHSS = -1;
+    private int totalMemberCountSHSS = 0;
+    private int totalCityCountSHSS = 0;
+    private boolean isMembersSHSSDirectoryComplete = false;
+    private boolean isFirstTimeAccessSHSS = true;
+    private int currentMemberCountSHSS = 0;
+    private HashMap<String, String> cityNameSHSS = new HashMap<String, String>();
 
     public String getName() {
         return name;
@@ -192,4 +201,70 @@ public class UserClass implements Serializable {
         this.cityName = cityName;
     }
 
+    // SHSS
+
+    public boolean getIsMembersSHSSDirectoryComplete() {
+        return isMembersSHSSDirectoryComplete;
+    }
+
+    public void setIsMembersSHSSDirectoryComplete(boolean isMembersSHSSDirectoryComplete) {
+        this.isMembersSHSSDirectoryComplete = isMembersSHSSDirectoryComplete;
+    }
+
+    public int getCurrentCityIndexSHSS() {
+        return currentCityIndexSHSS;
+    }
+
+    public void setCurrentCityIndexSHSS(int currentCityIndexSHSS) {
+        this.currentCityIndexSHSS = currentCityIndexSHSS;
+    }
+
+    public boolean getIsFirstTimeAccessSHSS() {
+        return isFirstTimeAccessSHSS;
+    }
+
+    public void setIsFirstTimeAccessSHSS(boolean isFirstTimeAccessSHSS) {
+        this.isFirstTimeAccessSHSS = isFirstTimeAccessSHSS;
+    }
+
+    public int getCurrentMemberCountSHSS() {
+        return currentMemberCountSHSS;
+    }
+
+    public void setCurrentMemberCountSHSS(int currentMemberCountSHSS) {
+        this.currentMemberCountSHSS = currentMemberCountSHSS;
+    }
+
+
+    public HashMap<String, String> getCityNameSHSS() {
+        return cityNameSHSS;
+    }
+
+    public void setCityNameSHSS(HashMap<String, String> cityNameSHSS) {
+        this.cityNameSHSS = cityNameSHSS;
+    }
+
+    public int getCurrentMemebersDirVersionSHSS() {
+        return currentMemebersDirVersionSHSS;
+    }
+
+    public void setCurrentMemebersDirVersionSHSS(int currentMemebersDirVersionSHSS) {
+        this.currentMemebersDirVersionSHSS = currentMemebersDirVersionSHSS;
+    }
+
+    public int getTotalMemberCountSHSS() {
+        return totalMemberCountSHSS;
+    }
+
+    public void setTotalMemberCountSHSS(int totalMemberCountSHSS) {
+        this.totalMemberCountSHSS = totalMemberCountSHSS;
+    }
+
+    public int getTotalCityCountSHSS() {
+        return totalCityCountSHSS;
+    }
+
+    public void setTotalCityCountSHSS(int totalCityCountSHSS) {
+        this.totalCityCountSHSS = totalCityCountSHSS;
+    }
 }

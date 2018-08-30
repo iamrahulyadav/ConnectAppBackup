@@ -1,4 +1,4 @@
-package com.connectapp.user.members;
+package com.connectapp.user.membershss;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -14,64 +14,34 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.connectapp.user.R;
-import com.connectapp.user.adapter.MemberListAdapter;
+import com.connectapp.user.adapter.SearchListAdapter;
 import com.connectapp.user.data.Member;
 import com.connectapp.user.db.MembersDB;
+import com.connectapp.user.db.MembersSHSSDB;
 
 import java.util.ArrayList;
 
-public class MemberListActivity extends AppCompatActivity {
+public class MemberSearchResultsSHSSActivity extends AppCompatActivity {
 
     private Context mContext;
-    private ListView lv_members;
-    private String cityName;
-    private ArrayList<Member> members;
+    private ListView lv_search_result;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
-
-        mContext = MemberListActivity.this;
-
-        lv_members = (ListView) findViewById(R.id.lv_search_result);
-
-        //Fetch Intent Data
-        cityName = getIntent().getStringExtra("cityName").trim();
-        Log.e("TAG", "CityName: " + cityName);
-
-        members = new MembersDB().getMembers(mContext, cityName);
-        Log.e("TAG", "member list size: " + members.size());
+        mContext = MemberSearchResultsSHSSActivity.this;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(cityName);
+        getSupportActionBar().setTitle("Members");
 
-        if (members.size() > 0) {
-            MemberListAdapter adapter = new MemberListAdapter(mContext, members);
-            lv_members.setAdapter(adapter);
-            lv_members.setOnItemClickListener(new OnItemClickListener() {
+        lv_search_result = (ListView) findViewById(R.id.lv_search_result);
 
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    Intent intent = new Intent(mContext, MemberViewActivity.class);
-                    intent.putExtra("member", members.get(position));
-                    startActivity(intent);
-
-                }
-            });
-        } else {
-            // Retry and fetch the Members again
-			/*UserClass userClass = Util.fetchUserClass(mContext);
-			userClass.setCurrentCityIndex(-1);
-			Util.saveUserClass(mContext, userClass);
-			startActivity(new Intent(mContext, MembersSHSSDirectory.class));
-			finish();*/
-        }
-
+        handleIntent(getIntent());
     }
 
     @Override
@@ -85,7 +55,6 @@ public class MemberListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -103,4 +72,36 @@ public class MemberListActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+
+            final ArrayList<Member> searchResult = new MembersSHSSDB().getSearchResult(mContext,
+                    intent.getStringExtra(SearchManager.QUERY));
+            Log.d("MemberSearchResActivity", "Size: " + searchResult.size());
+
+            if (searchResult != null && searchResult.size() < 1) {
+                Toast.makeText(mContext, "No Match found.", Toast.LENGTH_SHORT).show();
+
+            } else {
+                SearchListAdapter adapter = new SearchListAdapter(mContext, searchResult);
+                lv_search_result.setAdapter(adapter);
+                lv_search_result.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        Intent intent = new Intent(mContext, MemberViewSHSSActivity.class);
+                        intent.putExtra("member", searchResult.get(position));
+                        startActivity(intent);
+                    }
+                });
+            }
+
+        }
+    }
 }

@@ -15,7 +15,9 @@ import com.connectapp.user.R;
 import com.connectapp.user.data.Thread;
 import com.connectapp.user.data.UserClass;
 import com.connectapp.user.db.MembersDB;
+import com.connectapp.user.db.MembersSHSSDB;
 import com.connectapp.user.members.MembersDirectory;
+import com.connectapp.user.membershss.MembersSHSSDirectory;
 import com.connectapp.user.util.Util;
 
 public class EkalChaptersActivity extends AppCompatActivity {
@@ -83,7 +85,30 @@ public class EkalChaptersActivity extends AppCompatActivity {
         cv_shss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                UserClass userClass = Util.fetchUserClass(mContext);
+                boolean isMembersDirectoryEmpty = new MembersSHSSDB().isMembersDirectoryEmpty(mContext);
+                Log.e("isMembersDirectoryEmpty", "isMembersSHSSDirectoryEmpty: " + isMembersDirectoryEmpty);
+                if (isMembersDirectoryEmpty) {
+                    userClass.setIsMembersSHSSDirectoryComplete(false);
+                    userClass.setCurrentCityIndexSHSS(-1);
+                    userClass.setIsFirstTimeAccessSHSS(true);
+                    userClass.setCurrentMemberCountSHSS(0);
+                    Util.saveUserClass(mContext, userClass);
+                }
+                if (userClass.getIsMembersSHSSDirectoryComplete()) {
+                    Intent intent = new Intent(mContext, MembersSHSSDirectory.class);
+                    intent.putExtra("thread", mThread);
+                    startActivity(intent);
+                } else {
+                    if (Util.isInternetAvailable(mContext)) {
+                        Intent intent = new Intent(mContext, MembersSHSSDirectory.class);
+                        intent.putExtra("thread", mThread);
+                        startActivity(intent);
 
+                    } else {
+                        Toast.makeText(mContext, "No Internet Connection.", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
 

@@ -188,6 +188,21 @@ public class VolleyTaskManager extends ServiceConnector {
     }
 
     /**
+     * Service GET method to get all the Members Directory SHSS.
+     */
+    public void doGetMembersDirectorySHSS(int cityIndex) {
+        this.isToHideDialog = true;
+        isToShowDialog = false;
+
+        String url = getBaseURL() + "fetchMembersDirectorySHSS/" + cityIndex + "/1";
+        int method = Method.GET;
+
+        Log.e("url", url);
+        makeJsonObjReq(method, url, new HashMap<String, String>());
+
+    }
+
+    /**
      * Service GET method to get the current play-store versionCode-->
      **/
 
