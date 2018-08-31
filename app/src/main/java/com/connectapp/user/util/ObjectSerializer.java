@@ -29,7 +29,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
  
 public class ObjectSerializer {
- 
+
     public static String serialize(Serializable obj) throws IOException {
         if (obj == null) return "";
         ByteArrayOutputStream serialObj = new ByteArrayOutputStream();

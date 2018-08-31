@@ -219,6 +219,10 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     threadMembersDirectory.setThreadID("membersDirectory");
                     threadMembersDirectory.setThreadName("Members Directory");
                     threadMembersDirectory.setThreadImage(R.drawable.ic_members);
+                    Thread threadRevenueVillage = new Thread();
+                    threadRevenueVillage.setThreadID("revenueVillage");
+                    threadRevenueVillage.setThreadName("Revenue Village");
+                    threadRevenueVillage.setThreadImage(R.drawable.bg_village);
                     Thread threadEkalPrayash = new Thread();
                     threadEkalPrayash.setThreadID("ekalPrayash");
                     threadEkalPrayash.setThreadName("Ekal Prayash");
@@ -229,6 +233,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     threadChat.setThreadImage(R.drawable.ic_chat_bg);*/
                     threadList.add(threadResources);
                     threadList.add(threadMembersDirectory);
+                    threadList.add(threadRevenueVillage);
                     threadList.add(threadEkalPrayash);
                     // threadList.add(threadChat);
                     saveThreads(threadList);
@@ -303,6 +308,13 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                             Toast.makeText(mContext, "No Internet Connection.", Toast.LENGTH_SHORT).show();
                         }
                     }*/
+
+                } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Revenue Village")) {
+
+                    /*Intent intent = new Intent(mContext, EkalChaptersActivity.class);
+                    intent.putExtra("thread", threadList.get(position));
+                    startActivity(intent);*/
+                    Toast.makeText(mContext, "Revenue Village", Toast.LENGTH_SHORT).show();
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
 

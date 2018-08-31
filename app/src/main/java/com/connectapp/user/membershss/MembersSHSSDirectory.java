@@ -152,6 +152,10 @@ public class MembersSHSSDirectory extends AppCompatActivity implements OnClickLi
         UserClass userClass = Util.fetchUserClass(mContext);
 
         Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndexSHSS());
+        Log.e("TAG", "Is mem dir competa? " + userClass.getIsMembersSHSSDirectoryComplete());
+        Log.e("TAG", "Current Die Version: " + userClass.getCurrentMemebersDirVersionSHSS());
+        Log.e("TAG", "Is First Time Access: " + userClass.getIsFirstTimeAccessSHSS());
+        Log.e("TAG", "Is First Time Access: " + userClass.getCityNameSHSS());
         if (userClass != null && userClass.getCurrentCityIndexSHSS() == -1) {
             Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndexSHSS());
             pDialog.show();
@@ -163,7 +167,7 @@ public class MembersSHSSDirectory extends AppCompatActivity implements OnClickLi
             Log.e("TAG", "Current City Index: " + userClass.getCurrentCityIndexSHSS());
             if (!userClass.getIsMembersSHSSDirectoryComplete()) {
                 pDialog.show();
-                cityMap = userClass.getCityName();
+                cityMap = userClass.getCityNameSHSS();
                 currentNode = Util.fetchUserClass(mContext).getCurrentCityIndexSHSS();
                 isFetchMembers = true;
                 volleyTaskManager.doGetMembersDirectorySHSS(currentNode);
@@ -243,6 +247,7 @@ public class MembersSHSSDirectory extends AppCompatActivity implements OnClickLi
 
                 // Move to the next node
                 currentNode++;
+                Log.e("CurrentCityIndexSHSS", "CurrentCityIndexSHSS: " + currentNode);
                 mUserClass.setCurrentCityIndexSHSS(currentNode);
 
                 Util.saveUserClass(mContext, mUserClass);
@@ -281,7 +286,14 @@ public class MembersSHSSDirectory extends AppCompatActivity implements OnClickLi
 
                 }
 
+                //TODO
+                else {
+
+                    Log.e("Else loop", "Else loop");
+                }
+                Log.e("cityCount", "cityCount: " + cityCount);
                 Util.saveUserClass(mContext, mUserClass);
+                Log.e("TAG", "user Details saved.");
 
             } else {
                 // Retry
