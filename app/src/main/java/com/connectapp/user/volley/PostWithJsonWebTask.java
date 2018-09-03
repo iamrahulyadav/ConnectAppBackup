@@ -1,5 +1,6 @@
 package com.connectapp.user.volley;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
@@ -10,6 +11,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
@@ -251,4 +253,93 @@ public class PostWithJsonWebTask {
         queue.add(jsObjRequest);
     }
 
+    /**
+     * This method is created is pretty sweet enjoy it.- ritwik
+     */
+    public static void sendDataString(final String appData, Activity mactivity, final ServerStringResponseCallback serverResponseCallback
+            , final boolean isLoader, final String url) {
+        RequestQueue queue = Volley.newRequestQueue(mactivity);
+        activity = mactivity;
+        if (isLoader) {
+            progressdialog = new ProgressDialog(mactivity);
+            progressdialog.setMessage("Please wait...");
+            progressdialog.show();
+        }
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Util.printLog(0, "SERVER RESPONSE", "URL:" + url
+                                    + "<><><>STATUS CODE:" + mStatusCode
+                                    + "<><><>MESSAGE:<><><<><><>RESPONSE:"
+                                    + response.toString());
+                        } catch (Exception e) {
+                            progressdialog.dismiss();
+                            e.printStackTrace();
+                        } finally {
+                            switch (mStatusCode) {
+                                case 200:
+                                    if (isLoader) {
+                                        progressdialog.dismiss();
+                                    }
+                                    status.setCode(mStatusCode);
+                                    serverResponseCallback.onSuccess(response.toString());
+
+                                    break;
+                                default:
+                                    if (isLoader) {
+                                        progressdialog.dismiss();
+                                    }
+                                    Util.alertMessage(activity, "Alert!!", "Ok", response.toString());
+                                    break;
+                            }
+                        }
+
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Util.printLog(0, "Json", "class--" + activity.getLocalClassName());
+                        progressdialog.dismiss();
+                        Log.e("error => " + mStatusCode, error.toString());
+                        if (error instanceof NoConnectionError) {
+                            Util.alertMessage(activity, "Alert!!", "ok", activity.getString(R.string.no_internet));
+                        } else if (error instanceof ServerError) {
+                            Util.alertMessage(activity, "Alert!!", "ok", activity.getString(R.string.server_error));
+                        } else if (error instanceof TimeoutError) {
+                            Util.alertMessage(activity, "Alert!!", "ok", activity.getString(R.string.response_timeout));
+                        } else if (error instanceof AuthFailureError) {
+                            Util.alertMessage(activity, "Alert!!", "ok", activity.getString(R.string.response_timeout));
+                        }
+                        if (serverResponseCallback != null) {
+                            serverResponseCallback.ErrorMsg(error); // handle the error in the activity
+                        }
+                    }
+                }) {
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                mStatusCode = response.statusCode;
+                return super.parseNetworkResponse(response);
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return appData.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/text");
+                return headers;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(stringRequest);
+    }
 }

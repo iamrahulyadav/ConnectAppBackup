@@ -42,7 +42,6 @@ public class VolleyTaskManager extends ServiceConnector {
 
     public VolleyTaskManager(Context context) {
         mContext = context;
-
         mProgressDialog = new ProgressDialog(mContext);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgressDialog.setCancelable(false);
@@ -111,7 +110,6 @@ public class VolleyTaskManager extends ServiceConnector {
                     error.printStackTrace();
                     Toast.makeText(mContext, mContext.getString(R.string.parse_error), Toast.LENGTH_LONG).show();
                 }
-
                 ((ServerResponseCallback) mContext).onError();
             }
         }) {
@@ -147,12 +145,9 @@ public class VolleyTaskManager extends ServiceConnector {
      **/
 
     public void doGetAppVersionCodeFromPlaystore(String currentVersionCode) {
-
         this.isToHideDialog = true;
-
         String url = getVersionCodeURL() + currentVersionCode;
         int method = Method.GET;
-
         Log.e("url", url);
         makeJsonObjReq(method, url, new HashMap<String, String>());
     }
@@ -162,12 +157,9 @@ public class VolleyTaskManager extends ServiceConnector {
      **/
 
     public void doGetFetchRathNumbers() {
-
         this.isToHideDialog = true;
-
         String url = Consts.GET_RATH_NUMBERS;
         int method = Method.GET;
-
         Log.e("url", url);
         makeJsonObjReq(method, url, new HashMap<String, String>());
     }
@@ -178,10 +170,8 @@ public class VolleyTaskManager extends ServiceConnector {
     public void doGetMembersDirectory(int cityIndex) {
         this.isToHideDialog = true;
         isToShowDialog = false;
-
         String url = getBaseURL() + "fetchMembersDirectory/" + cityIndex + "/1";
         int method = Method.GET;
-
         Log.e("url", url);
         makeJsonObjReq(method, url, new HashMap<String, String>());
 
@@ -193,10 +183,8 @@ public class VolleyTaskManager extends ServiceConnector {
     public void doGetMembersDirectorySHSS(int cityIndex) {
         this.isToHideDialog = true;
         isToShowDialog = false;
-
         String url = getBaseURL() + "fetchMembersDirectorySHSS/" + cityIndex + "/1";
         int method = Method.GET;
-
         Log.e("url", url);
         makeJsonObjReq(method, url, new HashMap<String, String>());
 
@@ -207,13 +195,21 @@ public class VolleyTaskManager extends ServiceConnector {
      **/
 
     public void doGetYoutubePlaylist(String playlistCode) {
-
         this.isToHideDialog = true;
-
         String url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=" + playlistCode
                 + "&maxResults=25&key=AIzaSyC-YyIxbDLPMw0_nkLjj_BfpVozRf84pEM";
         int method = Method.GET;
+        Log.e("url", url);
+        makeJsonObjReq(method, url, new HashMap<String, String>());
+    }
 
+    /**
+     * Service GET method calling for Rath Numbers -->
+     **/
+
+    public void doGet(String url) {
+        this.isToHideDialog = true;
+        int method = Method.GET;
         Log.e("url", url);
         makeJsonObjReq(method, url, new HashMap<String, String>());
     }
@@ -223,6 +219,18 @@ public class VolleyTaskManager extends ServiceConnector {
     //*****************************************
 
     /**
+     * Service method calling for POST -->
+     **/
+
+    public void doPost(HashMap<String, String> paramsMap, boolean isToHideDialog, String url) {
+        this.isToHideDialog = isToHideDialog;
+        int method = Method.POST;
+        Log.e("url", url);
+        Log.e("paramsMap", "paramsMap" + paramsMap);
+        makeJsonObjReq(method, url, paramsMap);
+    }
+
+    /**
      * Service method calling for Login -->
      **/
 
@@ -230,9 +238,7 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.LOGIN_URL;
         int method = Method.POST;
-
         Log.e("url", url);
-        System.out.println(paramsMap);
         makeJsonObjReq(method, url, paramsMap);
     }
 
@@ -244,9 +250,6 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.REGISTRATION_URL;
         int method = Method.POST;
-
-        Log.e("url", url);
-        System.out.println(paramsMap);
         makeJsonObjReq(method, url, paramsMap);
     }
 
@@ -258,9 +261,6 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.FETCH_THREADS_URL;
         int method = Method.POST;
-
-        Log.e("url", url);
-        System.out.println(paramsMap);
         makeJsonObjReq(method, url, paramsMap);
     }
 
@@ -286,9 +286,7 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.USER_SUBMISSION_URL;
         int method = Method.POST;
-
         Log.e("url", url);
-        System.out.println(paramsMap);
         Log.e("TAG", "Request JSON \n" + new JSONObject(paramsMap).toString());
         makeJsonObjReq(method, url, paramsMap);
     }
@@ -300,9 +298,7 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.CHECK_MEMBERS_DIRECTORY;
         int method = Method.POST;
-
         Log.e("url", url);
-        System.out.println(paramsMap);
         Log.e("TAG", "Request JSON \n" + new JSONObject(paramsMap).toString());
         makeJsonObjReq(method, url, paramsMap);
 
@@ -315,9 +311,7 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.FETCH_PROFILE_URL;
         int method = Method.POST;
-
         Log.e("url", url);
-        System.out.println(paramsMap);
         makeJsonObjReq(method, url, paramsMap);
     }
 
@@ -329,9 +323,7 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.UPDATE_PROFILE_URL;
         int method = Method.POST;
-
         Log.e("url", url);
-        System.out.println(paramsMap);
         makeJsonObjReq(method, url, paramsMap);
     }
 
@@ -342,9 +334,7 @@ public class VolleyTaskManager extends ServiceConnector {
         this.isToHideDialog = isToHideDialog;
         String url = Consts.FETCH_CHAT_CONTACTS_URL;
         int method = Method.POST;
-
         Log.e("url", url);
-        System.out.println(paramsMap);
         makeJsonObjReq(method, url, paramsMap);
     }
 

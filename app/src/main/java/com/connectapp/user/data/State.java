@@ -1,19 +1,31 @@
 package com.connectapp.user.data;
 
-public class State {
-	private String name;
-	private String code;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-	public State(String name, String code) {
-		this.name = name;
-		this.code = code;
-	}
+public class State implements Serializable {
+    private String name;
+    private String code;
+    private ArrayList<District> districts;
 
-	public String getName() {
-		return name;
-	}
+    public State(String name, String code) {
+        this.name = name;
+        this.code = code;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public ArrayList<District> getDistricts() {
+        return districts;
+    }
+
+    public void setDistricts(ArrayList<District> districts) {
+        this.districts = districts;
+    }
 }

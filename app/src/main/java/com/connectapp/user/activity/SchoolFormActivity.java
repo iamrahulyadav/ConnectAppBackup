@@ -833,7 +833,7 @@ public class SchoolFormActivity extends AppCompatActivity implements LocationLis
     }
 
     public synchronized void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("------>> onActivityResult CALLED  >>---------------");
+        //System.out.println("------>> onActivityResult CALLED  >>---------------");
         if (requestCode == 11 && resultCode == Activity.RESULT_OK) {
             tv_stateCode.setText(data.getStringExtra(StateCodeActivity.RESULT_STATECODE));
             et_anchal.requestFocus();

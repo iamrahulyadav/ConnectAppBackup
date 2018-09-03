@@ -257,6 +257,19 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity
+            android:name=".dropDownActivity.StateListActivity"
+            android:label="State"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
+            android:name=".dropDownActivity.DistrictListActivity"
+            android:label="District"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+
+        <activity
             android:name=".activity.HistoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyCompatTheme"
@@ -328,6 +341,14 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.RevenueVillageActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.VillageFormActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.SearchViewActivity"
             android:launchMode="singleTask"

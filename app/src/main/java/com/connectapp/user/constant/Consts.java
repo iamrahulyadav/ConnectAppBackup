@@ -30,4 +30,6 @@ public class Consts {
 
     public static final String FETCH_CHAT_CONTACTS_URL = BASE_URL + "fetchChatContacts";
 
+    public static final String VILLAGE_SUBMISSION_URL = BASE_URL + "insertVillageInfo";
+
 }

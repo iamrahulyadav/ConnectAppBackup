@@ -25,6 +25,7 @@ import com.connectapp.user.activity.EkalChaptersActivity;
 import com.connectapp.user.activity.KeyWordActivity;
 import com.connectapp.user.activity.RathFormActivity;
 import com.connectapp.user.activity.ResourcesActivity;
+import com.connectapp.user.activity.RevenueVillageActivity;
 import com.connectapp.user.activity.SchoolFormActivity;
 import com.connectapp.user.adapter.ThreadListAdapter;
 import com.connectapp.user.constant.Consts;
@@ -311,10 +312,10 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Revenue Village")) {
 
-                    /*Intent intent = new Intent(mContext, EkalChaptersActivity.class);
-                    intent.putExtra("thread", threadList.get(position));
-                    startActivity(intent);*/
-                    Toast.makeText(mContext, "Revenue Village", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext, RevenueVillageActivity.class);
+                    //  intent.putExtra("thread", threadList.get(position));
+                    startActivity(intent);
+                    // Toast.makeText(mContext, "Revenue Village", Toast.LENGTH_SHORT).show();
 
                 } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Prayash")) {
 
