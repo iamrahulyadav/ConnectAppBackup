@@ -1,13 +1,18 @@
 package com.connectapp.user.activity;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.connectapp.user.R;
@@ -29,8 +34,9 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     private Context mContext;
     private EditText et_name, et_idNo, et_phone, et_email, et_familyMemCount, et_religion, et_occupation;
     private DropDownViewForXML dropDown_idType, dropDown_gender, dropDown_role, dropDown_qualification, dropDown_incomeGroup;
-    private TextView tv_dob, tv_dom, tv_languages, tv_imageProgress;
+    private TextView tv_dob, tv_dom, tv_languages, tv_imageProgress, tv_spouse;
     private ViewPager vp_selectedImages;
+    private LinearLayout ll_spouse;
     // Volley
     private VolleyTaskManager volleyTaskManager;
     private ArrayList<Spouse> spouses = new ArrayList<>();
@@ -38,6 +44,8 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     private String stateName, districtName, villageName;
 
     private static final int DATE_DIALOG_ID = 316;
+    private int year = 2000, day = 01, tempMonth = 01;
+    private View selectedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +57,6 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
         villageName = getIntent().getStringExtra("village");
         initView();
         volleyTaskManager = new VolleyTaskManager(mContext);
-
     }
 
     /**
@@ -68,6 +75,7 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
         tv_dom = (TextView) findViewById(R.id.tv_dom);
         tv_languages = (TextView) findViewById(R.id.tv_languages);
         tv_imageProgress = (TextView) findViewById(R.id.tv_imageProgress);
+        tv_spouse = (TextView) findViewById(R.id.tv_spouse);
 
         dropDown_idType = (DropDownViewForXML) findViewById(R.id.dropDown_idType);
         dropDown_gender = (DropDownViewForXML) findViewById(R.id.dropDown_gender);
@@ -77,8 +85,50 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
 
         vp_selectedImages = (ViewPager) findViewById(R.id.vp_selectedImages);
 
+        ll_spouse = (LinearLayout) findViewById(R.id.ll_spouse);
 
         tv_dob.setOnClickListener(this);
+        tv_dom.setOnClickListener(this);
+
+        populateIdTypeDropdown();
+        populateGenderDropdown();
+        populateRoleDropdown();
+        populateQualificationDropdown();
+        populateIncomeDropdown();
+    }
+
+    private void populateIdTypeDropdown() {
+        dropDown_idType.setText("");
+        String[] countrynames = getResources().getStringArray(R.array.ref_id_type_array);
+        dropDown_idType.setItems(countrynames);
+    }
+
+    private void populateGenderDropdown() {
+        dropDown_gender.setText("");
+        String[] countrynames = getResources().getStringArray(R.array.gender_array);
+        dropDown_gender.setItems(countrynames);
+    }
+
+    private void populateRoleDropdown() {
+        dropDown_role.setText("");
+        String[] countrynames = getResources().getStringArray(R.array.role_array);
+        dropDown_role.setItems(countrynames);
+    }
+
+    private void populateQualificationDropdown() {
+        dropDown_qualification.setText("");
+        String[] countrynames = getResources().getStringArray(R.array.qualification_array);
+        dropDown_qualification.setItems(countrynames);
+    }
+
+    private void populateIncomeDropdown() {
+        dropDown_incomeGroup.setText("");
+        String[] countrynames = getResources().getStringArray(R.array.income_group_array);
+        dropDown_incomeGroup.setItems(countrynames);
+    }
+
+    public void onSpouseAddClick(View view) {
+
     }
 
     public void onAddLangClick(View view) {
@@ -86,7 +136,7 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     }
 
     public void onCancelClicked(View view) {
-
+        finish();
     }
 
     public void onPostClicked(View view) {
@@ -98,6 +148,7 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     public void onCameraClicked(View view) {
 
     }
+
 
     private void validateAndPostFormData() {
         if (et_name.getText().toString().length() == 0) {
@@ -137,7 +188,7 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
         //TODO Send Picture
         requestMap.put("picture", "");
 
-        if (tv_dom.getText().toString().trim().length() > 0) {
+        /*if (tv_dom.getText().toString().trim().length() > 0) {
             if (spouses.size() > 0) {
                 //TODO Create JSON ARRAY
                 // "dom": [{ "spouse":"BBB", "dob":"12/04/1980", "age":"38" }]
@@ -146,10 +197,10 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
             }
         } else {
             requestMap.put("dom", "");
-        }
-
+        }*/
+        requestMap.put("dom", "" + tv_dom.getText().toString().trim());
         String formData = new JSONObject(requestMap).toString().trim();
-
+        Log.e("JSON", "JSON" + formData);
         PostWithJsonWebTask.sendDataString(formData, VillageFormActivity.this, new ServerStringResponseCallback() {
             @Override
             public void onSuccess(String resultJsonObject) {
@@ -174,11 +225,61 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View mView) {
+        switch (mView.getId()) {
             case R.id.tv_dob:
                 showDialog(DATE_DIALOG_ID);
+                selectedView = mView;
+                break;
+            case R.id.tv_dom:
+                showDialog(DATE_DIALOG_ID);
+                selectedView = mView;
                 break;
         }
     }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATE_DIALOG_ID:
+                // set date picker as current date
+                return new DatePickerDialog(this, datePickerListener, year, tempMonth, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            tempMonth = selectedMonth;
+            day = selectedDay;
+
+            String dayPading, monthPadding;
+            if (selectedDay < 10) {
+                dayPading = "0" + String.valueOf(day);
+            } else {
+                dayPading = String.valueOf(day);
+            }
+
+            if (selectedMonth < 9) {
+                monthPadding = "0" + String.valueOf(selectedMonth + 1);
+            } else {
+                monthPadding = String.valueOf(selectedMonth + 1);
+            }
+
+            String pickedDate = selectedYear + "-" + monthPadding + "-" + dayPading;
+//			sendingDate = monthPadding + "/" + dayPading + "/" + selectedYear;
+            ((TextView) selectedView).setText(pickedDate);
+            Log.v("DatePickerDialog", pickedDate);
+
+            if (selectedView.getId() == R.id.tv_dom) {
+                Toast.makeText(mContext, "Add Spouse", Toast.LENGTH_SHORT).show();
+                ll_spouse.setVisibility(View.VISIBLE);
+
+            }
+        }
+    };
+
+
 }

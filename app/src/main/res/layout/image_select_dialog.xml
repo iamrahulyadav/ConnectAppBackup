@@ -10,7 +10,7 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
-        android:background="@drawable/grey_white_border_box"
+        android:background="@drawable/blue_border_box"
         android:padding="10dp" >
 
         <LinearLayout

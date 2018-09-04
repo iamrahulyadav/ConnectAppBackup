@@ -167,6 +167,8 @@
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:hint="Enter Village Name"
+                android:imeOptions="actionDone"
+                android:inputType="textCapWords"
                 android:paddingLeft="13dp"
                 android:paddingRight="35dp"
                 android:singleLine="true"

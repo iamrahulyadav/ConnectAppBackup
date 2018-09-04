@@ -111,6 +111,7 @@ public class RevenueVillageActivity extends AppCompatActivity implements View.On
             dropDownActivity_state.setText("" + selectedState.getName().trim());
             String stateCode = selectedState.getCode();
             dropDownActivity_district.setText("");
+            et_village_name.setText("");
             getDistrictFromStateCode(stateCode);
 
         } else if (requestCode == DISTRICT_REQ_CODE && resultCode == Activity.RESULT_OK) {

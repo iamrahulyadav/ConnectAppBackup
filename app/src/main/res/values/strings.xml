@@ -322,5 +322,36 @@
     </string-array>
 
     <string name="digits">0123456789.</string>
+    <string-array name="ref_id_type_array">
+        <item>Aadhar Card</item>
+        <item>Voters ID Card</item>
+        <item>Others</item>
+    </string-array>
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Others</item>
+    </string-array>
+    <string-array name="role_array">
+        <item>Bread-Earner</item>
+        <item>Student</item>
+        <item>Houserhelp</item>
+        <item>Others</item>
+    </string-array>
+    <string-array name="qualification_array">
+        <item>Graduate</item>
+        <item>High-School</item>
+        <item>Primary-School</item>
+        <item>Home School</item>
+        <item>Others</item>
+    </string-array>
+
+    <string-array name="income_group_array">
+        <item>&#x3c;= 1,00000</item>
+        <item>&#x3e; 1,00000 &#x3c;= 3,00000</item>
+        <item>&#x3e; 3,00000 &#x3c;= 5,00000</item>
+        <item>&#x3e; 5,00000</item>
+    </string-array>
+
 
 </resources>
