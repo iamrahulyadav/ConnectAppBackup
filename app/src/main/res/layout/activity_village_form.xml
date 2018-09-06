@@ -125,6 +125,7 @@
                         android:gravity="center_vertical"
                         android:paddingLeft="5dp"
                         android:paddingRight="35dp"
+                        android:hint="-- select --"
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333" />
@@ -254,6 +255,7 @@
                         android:inputType="textWebEmailAddress"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
+
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333"
@@ -351,10 +353,10 @@
 
                 <LinearLayout
                     android:id="@+id/ll_spouse"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -391,9 +393,9 @@
                             android:clickable="true"
                             android:gravity="center_vertical"
                             android:paddingLeft="5dp"
-                            android:text="Spouse1, Spouse2"
                             android:paddingRight="35dp"
                             android:singleLine="true"
+                            android:text="Indira Banerjee"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="#333333" />
 
@@ -425,6 +427,7 @@
                         android:paddingLeft="5dp"
                         android:paddingRight="35dp"
                         android:singleLine="true"
+                        android:hint="-- select --"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333" />
 
@@ -515,6 +518,7 @@
                         android:gravity="center_vertical"
                         android:paddingLeft="5dp"
                         android:paddingRight="35dp"
+                        android:hint="-- select --"
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333" />
@@ -564,6 +568,7 @@
                         android:paddingLeft="5dp"
                         android:paddingRight="35dp"
                         android:singleLine="true"
+                        android:hint="-- select --"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333" />
 
@@ -643,6 +648,7 @@
                         android:paddingLeft="5dp"
                         android:paddingRight="35dp"
                         android:singleLine="true"
+                        android:hint="-- select --"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333" />
 
@@ -680,6 +686,7 @@
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
                         android:singleLine="true"
+                        android:text="English, Hindi, Bengali"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#333333"
                         android:textColorHint="#347B8F" />
@@ -817,6 +824,29 @@
                     android:weightSum="2">
 
                     <Button
+                        android:id="@+id/btn_add_person"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/blue_btn_selector"
+                        android:onClick="onAddMoreClick"
+                        android:shadowColor="#dd000000"
+                        android:shadowDx="-1"
+                        android:shadowDy="-1"
+                        android:shadowRadius="2"
+                        android:text="ADD MORE"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:weightSum="2">
+
+                    <Button
                         android:id="@+id/btn_cancel"
                         android:layout_width="0dp"
                         android:layout_height="40dp"
@@ -844,7 +874,7 @@
                         android:shadowDx="-1"
                         android:shadowDy="-1"
                         android:shadowRadius="2"
-                        android:text="POST"
+                        android:text="SUBMIT"
                         android:textColor="#ffffff"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -881,6 +911,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="MASSPL"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:autoLink="web"
+                android:text="@string/masspl_site"
                 android:textColor="#ffffff" />
         </LinearLayout>
     </RelativeLayout>

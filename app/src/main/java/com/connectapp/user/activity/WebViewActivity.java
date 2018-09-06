@@ -14,8 +14,8 @@ import com.connectapp.user.R;
 import com.connectapp.user.syncadapter.DBConstants;
 
 /**
- * 
- * 
+ *
+ *
  * @author ritwik.rai
  **/
 public class WebViewActivity extends AppCompatActivity implements DBConstants {
@@ -44,14 +44,15 @@ public class WebViewActivity extends AppCompatActivity implements DBConstants {
 		wv_schoolView = (WebView) findViewById(R.id.wv_schoolView);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		mDialog = new ProgressDialog(mContext);
 		mDialog.setCancelable(true);
 		mDialog.setMessage("Loading.. Please wait.");
 		wv_schoolView.setWebViewClient(new myWebClient());
 		String loadUrl = getIntent().getStringExtra("loadUrl");
 		getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
-		wv_schoolView.loadUrl(loadUrl);
+		wv_schoolView.loadDataWithBaseURL(null,loadUrl, "text/html", "UTF-8",null);
+		//wv_schoolView.loadUrl(loadUrl);
 		wv_schoolView.getSettings().setJavaScriptEnabled(true);
 		wv_schoolView.requestFocus();
 

@@ -36,7 +36,7 @@ public class MemberSearchResultsActivity extends AppCompatActivity {
         mContext = MemberSearchResultsActivity.this;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Members");
+        getSupportActionBar().setTitle("FTS Members");
 
         lv_search_result = (ListView) findViewById(R.id.lv_search_result);
 

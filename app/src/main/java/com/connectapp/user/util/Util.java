@@ -56,6 +56,7 @@ public class Util {
     private static String CHATCLASS = "CHATCLASS";
     private static String USERCHATCLASS = "USERCHATCLASS";
     private static String SELECTEDUSERCLASS = "SELECTEDUSERCLASS";
+    private static String PERSONCOUNT = "PERSONCOUNT";
 
     private static int CONNECTIONTIMEOUT = 8000;
     private static StringBuilder sb = null;
@@ -671,6 +672,40 @@ public class Util {
         }
 
         return data;
+    }
+
+    /**
+     * Saving personCount
+     **/
+    public static void savePersonCount(final Context mContext, int count) {
+        SharedPreferences LastMilePrefs = mContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = LastMilePrefs.edit();
+        try {
+            prefsEditor.putString(PERSONCOUNT, ObjectSerializer.serialize(count));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        prefsEditor.commit();
+    }
+
+    /**
+     * Fetching Person count
+     **/
+    public static int fetchPersonCount(final Context mContext) {
+        SharedPreferences LastMilePrefs = mContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        int personCount = 0;
+        String serializeOrg = LastMilePrefs.getString(PERSONCOUNT, null);
+        try {
+            if (serializeOrg != null) {
+                personCount = (int) ObjectSerializer.deserialize(serializeOrg);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return personCount;
     }
 
     /**

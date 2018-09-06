@@ -70,7 +70,7 @@ public class NewMembersSHSSDirectory extends AppCompatActivity implements OnClic
 		pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pDialog.setCancelable(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle("Members Directory");
+		getSupportActionBar().setTitle("SHSS Members Directory");
 		
 		fetchMembersDirectory();
 		

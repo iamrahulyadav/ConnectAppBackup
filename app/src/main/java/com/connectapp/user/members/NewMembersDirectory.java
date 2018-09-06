@@ -70,7 +70,7 @@ public class NewMembersDirectory extends AppCompatActivity implements OnClickLis
 		pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pDialog.setCancelable(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle("Members Directory");
+		getSupportActionBar().setTitle("FTS Members Directory");
 		
 		fetchMembersDirectory();
 		

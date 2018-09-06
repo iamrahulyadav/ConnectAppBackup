@@ -256,7 +256,7 @@
 
 
     <string-array name="states_array">
-        <item>Andhra Pradesh</item>
+       <!-- <item>Andhra Pradesh</item>
         <item>Arunachal Pradesh</item>
         <item>Assam</item>
         <item>Bihar</item>
@@ -284,12 +284,12 @@
         <item>Telangana</item>
         <item>Tripura</item>
         <item>Uttarakhand</item>
-        <item>Uttar Pradesh</item>
+        <item>Uttar Pradesh</item>-->
         <item>West Bengal</item>
     </string-array>
 
     <string-array name="states_code_array">
-        <item>AP</item>
+       <!-- <item>AP</item>
         <item>AR</item>
         <item>AS</item>
         <item>BR</item>
@@ -317,7 +317,7 @@
         <item>TG</item>
         <item>TR</item>
         <item>UK</item>
-        <item>UP</item>
+        <item>UP</item>-->
         <item>WB</item>
     </string-array>
 
@@ -346,12 +346,63 @@
         <item>Others</item>
     </string-array>
 
-    <string-array name="income_group_array">
+    <!--<string-array name="income_group_array">
         <item>&#x3c;= 1,00000</item>
         <item>&#x3e; 1,00000 &#x3c;= 3,00000</item>
         <item>&#x3e; 3,00000 &#x3c;= 5,00000</item>
         <item>&#x3e; 5,00000</item>
+    </string-array>-->
+    <string-array name="income_group_array">
+        <item>less than 1,00000</item>
+        <item>1,00000 - 3,00000</item>
+        <item>3,00000 - 5,00000</item>
+        <item>more than 5,00000</item>
     </string-array>
 
+    <string-array name="district_array_demo">
+        <item>Medinipur</item>
+    </string-array>
 
-</resources>
+    <string-array name="district_code_array_demo">
+        <item>WB_MP</item>
+    </string-array>
+    <string-array name="tehsil_array_demo">
+        <item>Contai - 1</item>
+    </string-array>
+
+    <string-array name="tehsil_code_array_demo">
+        <item>WB_MP_CO</item>
+    </string-array>
+    <string-array name="village_array_demo">
+        <item>Adambar</item>
+        <item>Akandi</item>
+        <item>Akgerya</item>
+        <item>Alalpur</item>
+        <item>Alipur</item>
+        <item>Amadpur</item>
+        <item>Amartalya</item>
+    </string-array>
+
+    <string-array name="village_code_array_demo">
+        <item>Adambar</item>
+        <item>Akandi</item>
+        <item>Akgerya</item>
+        <item>Alalpur</item>
+        <item>Alipur</item>
+        <item>Amadpur</item>
+        <item>Amartalya</item>
+    </string-array>
+
+    <string name="project1">Prathmik Siksha</string>
+    <string name="project2">Swasthya Sikshya</string>
+    <string name="project3">Gram vikas Sikhaya</string>
+    <string name="project4">Jagaran Sikhaya</string>
+    <string name="project5">Granthon Prakalp</string>
+    <string name="project6">Arogya Prakalp</string>
+    <string name="project7">Home Remedies</string>
+    <string name="project8">Gram Swaraj Manch</string>
+    <string name="project9">Shrihari Mandir Rath Utsav Bibhag</string>
+    <string name="project10">Sanskar Siksha</string>
+
+    <string name="masspl_site"> <a href="http://www.masspl.com">www.masspl.com</a></string>
+    </resources>

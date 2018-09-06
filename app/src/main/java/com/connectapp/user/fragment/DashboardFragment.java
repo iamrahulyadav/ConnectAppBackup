@@ -222,7 +222,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     threadMembersDirectory.setThreadImage(R.drawable.ic_members);
                     Thread threadRevenueVillage = new Thread();
                     threadRevenueVillage.setThreadID("revenueVillage");
-                    threadRevenueVillage.setThreadName("Revenue Village");
+                    threadRevenueVillage.setThreadName("Ekal Reach");
                     threadRevenueVillage.setThreadImage(R.drawable.bg_village);
                     Thread threadEkalPrayash = new Thread();
                     threadEkalPrayash.setThreadID("ekalPrayash");
@@ -310,7 +310,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                         }
                     }*/
 
-                } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Revenue Village")) {
+                } else if (threadList.get(position).getThreadName().equalsIgnoreCase("Ekal Reach")) {
 
                     Intent intent = new Intent(mContext, RevenueVillageActivity.class);
                     //  intent.putExtra("thread", threadList.get(position));

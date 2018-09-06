@@ -263,6 +263,30 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity
+            android:name=".dropDownActivity.DemoDistListActivity"
+            android:label="District"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
+            android:name=".view.SchoolDialog"
+            android:label=" "
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
+            android:name=".dropDownActivity.DemoTehsilListActivity"
+            android:label="Tehsil"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
+            android:name=".dropDownActivity.DemoVillageListActivity"
+            android:label="Village"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
             android:name=".dropDownActivity.DistrictListActivity"
             android:label="District"
             android:noHistory="true"

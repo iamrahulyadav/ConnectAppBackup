@@ -37,7 +37,7 @@ public class MemberSearchResultsSHSSActivity extends AppCompatActivity {
         mContext = MemberSearchResultsSHSSActivity.this;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Members");
+        getSupportActionBar().setTitle("SHSS Members");
 
         lv_search_result = (ListView) findViewById(R.id.lv_search_result);
 

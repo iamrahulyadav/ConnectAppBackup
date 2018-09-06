@@ -47,7 +47,7 @@
         </LinearLayout>
     </com.connectapp.user.view.MaterialRippleLayout>
 
-    <LinearLayout
+  <!--  <LinearLayout
         android:id="@+id/ll_content_close"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
@@ -63,9 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="#f5f5f5"
-            android:dividerHeight="1dp" >
-        </ListView>
-    </LinearLayout>
+            android:dividerHeight="1dp" />
+    </LinearLayout>-->
     <!--
     <LinearLayout
         android:layout_width="match_parent"

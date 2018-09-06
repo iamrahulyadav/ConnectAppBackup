@@ -72,7 +72,7 @@ public class MembersDirectory extends AppCompatActivity implements OnClickListen
         pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pDialog.setCancelable(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Members Directory");
+        getSupportActionBar().setTitle("FTS Members Directory");
 
 		/*	if (Util.fetchUserClass(mContext).getIsFirstTimeAccess()) {
 				// Accessing the members directory for the first time

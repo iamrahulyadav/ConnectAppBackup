@@ -12,19 +12,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.connectapp.user.R;
 import com.connectapp.user.data.Video;
 import com.connectapp.user.volley.VolleyTaskManager;
-import com.connectapp.user.youtube.PlayVideoActivity;
 import com.connectapp.user.youtube.YoutubeAsyncTask;
 import com.connectapp.user.youtube.YoutubePlayListListener;
-import com.connectapp.user.youtube.YoutubeVideoAdapter;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -35,7 +29,7 @@ public class ResourcesActivity extends AppCompatActivity implements YoutubePlayL
 	private Context mContext;
 	private LinearLayout ll_pdf_ekal_system, ll_vid_ev_mission, ll_vid_ev_story_one, ll_vid_ev_story_two, ll_vid_ev_pm_praise,
 			ll_vid_ev_vs_modi;
-	private ListView listView_youtubePlaylist;
+	//private ListView listView_youtubePlaylist;
 	private ProgressDialog mProgressDialog;
 	private static String tag_json_obj = "jobj_req";
 
@@ -54,13 +48,14 @@ public class ResourcesActivity extends AppCompatActivity implements YoutubePlayL
 
 		ll_pdf_ekal_system = (LinearLayout) findViewById(R.id.ll_pdf_ekal_system);
 
-		listView_youtubePlaylist = (ListView) findViewById(R.id.listView_youtubePlaylist);
+		//listView_youtubePlaylist = (ListView) findViewById(R.id.listView_youtubePlaylist);
 
 		ll_pdf_ekal_system.setOnClickListener(this);
 
 		permitMultiThreading();
 
-		getPlayList();
+		// TODO Comment out for youtube vids
+		//getPlayList();
 
 		/*volleyTaskManager = new VolleyTaskManager(mContext);
 
@@ -183,7 +178,8 @@ public class ResourcesActivity extends AppCompatActivity implements YoutubePlayL
 
 	@Override
 	public void videoPlaylistAsyncCallback(final ArrayList<Video> result) {
-		if (result != null && result.size() > 0) {
+		//TODO Comment out for youtube videos
+		/*if (result != null && result.size() > 0) {
 			YoutubeVideoAdapter mAdapter = new YoutubeVideoAdapter(ResourcesActivity.this, result);
 
 			listView_youtubePlaylist.setOnItemClickListener(new OnItemClickListener() {
@@ -201,6 +197,6 @@ public class ResourcesActivity extends AppCompatActivity implements YoutubePlayL
 			listView_youtubePlaylist.setAdapter(mAdapter);
 		} else {
 			Toast.makeText(mContext, "Something went wrong. Please try after sometime.", Toast.LENGTH_SHORT).show();
-		}
+		}*/
 	}
 }

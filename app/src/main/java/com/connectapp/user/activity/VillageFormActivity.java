@@ -78,6 +78,7 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     private ArrayList<ImageClass> imagesList = new ArrayList<>();
     private String imageFileName = "";
     private int imageCount = 0;
+    private int personCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
         stateName = getIntent().getStringExtra("state");
         districtName = getIntent().getStringExtra("district");
         villageName = getIntent().getStringExtra("village");
+        personCount = getIntent().getIntExtra("personCount", 0);
         initView();
         // Initialize volley
         volleyTaskManager = new VolleyTaskManager(mContext);
@@ -174,6 +176,11 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
     }
 
     public void onCancelClicked(View view) {
+        int count = Util.fetchPersonCount(mContext);
+        if (count != 0)
+            count = count - 1;
+        Log.e("onCancelClicked", "Person Count: " + count);
+        Util.savePersonCount(mContext, count);
         finish();
     }
 
@@ -449,5 +456,27 @@ public class VillageFormActivity extends AppCompatActivity implements ServerResp
             }
         }
 
+    }
+
+    public void onAddMoreClick(View view) {
+        Log.e("onAddMoreClick", "Person Count: " + Util.fetchPersonCount(mContext));
+        if (Util.fetchPersonCount(mContext) < 2) {
+            personCount = personCount + 1;
+            Util.savePersonCount(mContext, personCount);
+            Intent intent = new Intent(mContext, VillageFormActivity.class);
+            intent.putExtra("state", stateName);
+            intent.putExtra("district", districtName);
+            intent.putExtra("village", villageName);
+            intent.putExtra("personCount", personCount);
+            startActivity(intent);
+        } else {
+            Toast.makeText(mContext, "Max number of person already added", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        // DO nothing-- disable backpressed
     }
 }
