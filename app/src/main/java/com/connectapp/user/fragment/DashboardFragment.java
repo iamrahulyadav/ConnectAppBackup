@@ -220,10 +220,10 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     threadMembersDirectory.setThreadID("membersDirectory");
                     threadMembersDirectory.setThreadName("Members Directory");
                     threadMembersDirectory.setThreadImage(R.drawable.ic_members);
-                    Thread threadRevenueVillage = new Thread();
+                   /* Thread threadRevenueVillage = new Thread();
                     threadRevenueVillage.setThreadID("revenueVillage");
                     threadRevenueVillage.setThreadName("Ekal Reach");
-                    threadRevenueVillage.setThreadImage(R.drawable.bg_village);
+                    threadRevenueVillage.setThreadImage(R.drawable.bg_village);*/
                     Thread threadEkalPrayash = new Thread();
                     threadEkalPrayash.setThreadID("ekalPrayash");
                     threadEkalPrayash.setThreadName("Ekal Prayash");
@@ -234,7 +234,7 @@ public class DashboardFragment extends Fragment implements DBConstants, GoogleAp
                     threadChat.setThreadImage(R.drawable.ic_chat_bg);*/
                     threadList.add(threadResources);
                     threadList.add(threadMembersDirectory);
-                    threadList.add(threadRevenueVillage);
+                    //threadList.add(threadRevenueVillage);
                     threadList.add(threadEkalPrayash);
                     // threadList.add(threadChat);
                     saveThreads(threadList);
